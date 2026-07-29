@@ -6,20 +6,25 @@ import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 
 const execFileAsync = promisify(execFile);
-const bin = fileURLToPath(new URL("../bin/agent-light.mjs", import.meta.url));
+const bin = fileURLToPath(new URL("../bin/nocturne.mjs", import.meta.url));
+const legacyBin = fileURLToPath(new URL("../bin/agent-light.mjs", import.meta.url));
 const packageJson = JSON.parse(await readFile(new URL("../package.json", import.meta.url), "utf8"));
 
-test("--version matches package.json", async () => {
-  const { stdout, stderr } = await execFileAsync(process.execPath, [bin, "--version"]);
-  assert.equal(stdout.trim(), packageJson.version);
-  assert.equal(stderr, "");
+test("both CLI names report the package version", async () => {
+  for (const command of [bin, legacyBin]) {
+    const { stdout, stderr } = await execFileAsync(process.execPath, [command, "--version"]);
+    assert.equal(stdout.trim(), packageJson.version);
+    assert.equal(stderr, "");
+  }
 });
 
 test("--help documents the public command surface", async () => {
   const { stdout, stderr } = await execFileAsync(process.execPath, [bin, "--help"]);
-  assert.match(stdout, /agent-light notify/);
-  assert.match(stdout, /agent-light restore/);
-  assert.match(stdout, /agent-light daemon/);
+  assert.match(stdout, /Agent Nocturne/);
+  assert.match(stdout, /nocturne notify/);
+  assert.match(stdout, /nocturne restore/);
+  assert.match(stdout, /nocturne daemon/);
+  assert.match(stdout, /Compatibility alias: agent-light/);
   assert.equal(stderr, "");
 });
 

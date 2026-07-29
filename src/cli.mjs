@@ -12,6 +12,7 @@ import { configPath, createEvent, DEFAULT_TTL_MS, KNOWN_EVENTS, logPath, socketP
 
 const CONNECT_TIMEOUT_MS = 350;
 const START_TIMEOUT_MS = 1200;
+const START_LOCK_STALE_MS = 5000;
 const PACKAGE_VERSION = JSON.parse(await fs.readFile(new URL("../package.json", import.meta.url), "utf8")).version;
 
 export async function main(args) {
@@ -48,11 +49,13 @@ export async function main(args) {
 
 async function notify(args) {
   const { positional, flags } = parseArgs(args);
-  const eventName = positional[0];
-  if (!eventName) throw new Error("notify requires an event");
-  if (!KNOWN_EVENTS.has(eventName)) throw new Error(`Unknown event: ${eventName}`);
+  const eventNames = positional;
+  if (eventNames.length === 0) throw new Error("notify requires an event");
+  for (const eventName of eventNames) {
+    if (!KNOWN_EVENTS.has(eventName)) throw new Error(`Unknown event: ${eventName}`);
+  }
 
-  const event = createEvent({
+  const events = eventNames.map((eventName) => createEvent({
     event: eventName,
     agent: flags.agent || flags.a || "unknown",
     sessionId: flags.session || flags.s,
@@ -62,15 +65,17 @@ async function notify(args) {
     message: flags.message || flags.m,
     terminal: Boolean(flags.terminal),
     metadata: collectMetadata(flags),
-  });
+  }));
 
   // Hook calls must fail-open. Log but do not fail the agent process.
   try {
-    await sendEvent(event, { autoStart: true });
+    for (const event of events) {
+      await sendEvent(event, { autoStart: true });
+    }
   } catch (error) {
-    await appendLog("notify.failed", { error: error instanceof Error ? error.message : String(error), event }).catch(() => {});
+    await appendLog("notify.failed", { error: error instanceof Error ? error.message : String(error), events }).catch(() => {});
     if (!flags.quiet) {
-      console.error(`agent-light notify failed: ${error instanceof Error ? error.message : String(error)}`);
+      console.error(`nocturne notify failed: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }
@@ -134,7 +139,7 @@ async function daemonCommand(args) {
       return runDaemon();
     case "start":
       await startDaemon();
-      console.log(`agent-light daemon listening on ${socketPath()}`);
+      console.log(`Agent Nocturne daemon listening on ${socketPath()}`);
       return;
     case "stop":
       try {
@@ -153,7 +158,7 @@ async function daemonCommand(args) {
     case undefined:
     case "help":
     case "--help":
-      console.log("Usage: agent-light daemon <start|stop|run|probe>");
+      console.log("Usage: nocturne daemon <start|stop|run|probe>");
       return;
     default:
       throw new Error(`Unknown daemon command: ${subcommand}`);
@@ -204,20 +209,49 @@ function connectAndSend(event, timeoutMs = CONNECT_TIMEOUT_MS) {
 
 async function startDaemon() {
   if (await isDaemonRunning()) return;
-  const binPath = fileURLToPath(new URL("../bin/agent-light.mjs", import.meta.url));
-  const child = spawn(process.execPath, [binPath, "daemon", "run"], {
-    detached: true,
-    stdio: "ignore",
-    env: process.env,
-  });
-  child.unref();
 
+  const lockPath = `${socketPath()}.start.lock`;
+  let lock;
+  try {
+    lock = await fs.open(lockPath, "wx", 0o600);
+  } catch (error) {
+    if (error?.code !== "EEXIST") throw error;
+    const started = await waitForDaemon();
+    if (started) return;
+
+    const stat = await fs.stat(lockPath).catch(() => undefined);
+    if (stat && Date.now() - stat.mtimeMs > START_LOCK_STALE_MS) {
+      await fs.unlink(lockPath).catch(() => {});
+      return startDaemon();
+    }
+    throw new Error("daemon start is already in progress");
+  }
+
+  try {
+    if (await isDaemonRunning()) return;
+    const binPath = fileURLToPath(new URL("../bin/nocturne.mjs", import.meta.url));
+    const child = spawn(process.execPath, [binPath, "daemon", "run"], {
+      detached: true,
+      stdio: "ignore",
+      env: process.env,
+    });
+    child.unref();
+
+    if (await waitForDaemon()) return;
+    throw new Error("daemon did not become ready");
+  } finally {
+    await lock.close().catch(() => {});
+    await fs.unlink(lockPath).catch(() => {});
+  }
+}
+
+async function waitForDaemon() {
   const start = Date.now();
   while (Date.now() - start < START_TIMEOUT_MS) {
-    if (await isDaemonRunning()) return;
+    if (await isDaemonRunning()) return true;
     await sleep(80);
   }
-  throw new Error("daemon did not become ready");
+  return false;
 }
 
 async function isDaemonRunning() {
@@ -269,5 +303,5 @@ function sleep(ms) {
 
 function printHelp() {
   const events = [...KNOWN_EVENTS].filter((event) => !["status", "shutdown", "restore"].includes(event)).join("|");
-  console.log(`agent-light ${PACKAGE_VERSION}\n\nUsage:\n  agent-light notify <${events}> [--agent pi] [--session id] [--tool bash]\n  agent-light test <event> [--duration seconds]\n  agent-light status [--json]\n  agent-light restore\n  agent-light daemon <start|stop|run|probe>\n  agent-light config <init|show|path>\n\nConfig: ${configPath()}\nLog:    ${logPath()}\nSocket: ${socketPath()}\n`);
+  console.log(`Agent Nocturne ${PACKAGE_VERSION}\n\nUsage:\n  nocturne notify <${events}> [<event> ...] [--agent pi] [--session id] [--tool bash]\n  nocturne test <event> [--duration seconds]\n  nocturne status [--json]\n  nocturne restore\n  nocturne daemon <start|stop|run|probe>\n  nocturne config <init|show|path>\n\nCompatibility alias: agent-light\nConfig: ${configPath()}\nLog:    ${logPath()}\nSocket: ${socketPath()}\n`);
 }

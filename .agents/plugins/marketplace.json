@@ -1,0 +1,21 @@
+{
+  "name": "agent-nocturne",
+  "interface": {
+    "displayName": "Agent Nocturne"
+  },
+  "plugins": [
+    {
+      "name": "agent-nocturne",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/taekchef/agent-nocturne.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Developer Tools"
+    }
+  ]
+}

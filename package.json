@@ -1,26 +1,28 @@
 {
-  "name": "agent-light",
-  "version": "0.1.0",
+  "name": "agent-nocturne",
+  "version": "0.2.0",
   "private": true,
-  "description": "Local keyboard-backlight status bridge for coding agents.",
+  "description": "A nocturne for your coding agent, played on the MacBook keyboard backlight.",
   "author": "changfenhuang (taekchef)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/taekchef/macbook-agent-light.git"
+    "url": "git+https://github.com/taekchef/agent-nocturne.git"
   },
-  "homepage": "https://github.com/taekchef/macbook-agent-light#readme",
+  "homepage": "https://github.com/taekchef/agent-nocturne#readme",
   "bugs": {
-    "url": "https://github.com/taekchef/macbook-agent-light/issues"
+    "url": "https://github.com/taekchef/agent-nocturne/issues"
   },
   "type": "module",
   "bin": {
+    "nocturne": "./bin/nocturne.mjs",
     "agent-light": "./bin/agent-light.mjs"
   },
   "scripts": {
     "build:native": "mkdir -p native/build && clang -fobjc-arc -framework Foundation native/agent-light-backlight.m -o native/build/agent-light-backlight",
-    "check": "node --check bin/agent-light.mjs && node --check src/*.mjs && node --check src/backends/*.mjs && node --check adapters/claude-code/scripts/*.mjs && node --check adapters/codex/scripts/*.mjs",
+    "check": "node --check bin/*.mjs && node --check scripts/*.mjs && node --check src/*.mjs && node --check src/backends/*.mjs && node --check adapters/claude-code/scripts/*.mjs && node --check adapters/codex/scripts/*.mjs",
     "test": "node --test",
-    "smoke:mock": "AGENT_LIGHT_BACKEND=mock node ./bin/agent-light.mjs test done --duration 1"
+    "validate:claude": "claude plugin validate --strict .",
+    "smoke:mock": "node ./scripts/smoke-mock.mjs"
   },
   "keywords": [
     "macos",
@@ -35,7 +37,11 @@
     "node": ">=20"
   },
   "files": [
+    ".agents",
+    ".claude-plugin",
+    ".codex-plugin",
     "bin",
+    "scripts",
     "src",
     "native/agent-light-backlight.m",
     "adapters",

@@ -1,15 +1,16 @@
-# Contributing
+# Contributing to Agent Nocturne
 
-Issues and pull requests are welcome, especially compatibility reports for different MacBook and macOS versions.
+Issues and pull requests are welcome, especially compatibility reports for different MacBook, macOS, Claude Code, and Codex versions.
 
 Before submitting a change:
 
 ```bash
 npm run check
 npm test
+npm run validate:claude
 npm run build:native
 ```
 
-Use `AGENT_LIGHT_BACKEND=mock` for automated adapter tests. Hardware behavior still needs manual verification on a MacBook with a built-in backlit keyboard.
+Use `NOCTURNE_BACKEND=mock` for automated adapter tests. Hardware behavior still needs manual verification on a MacBook with a built-in backlit keyboard.
 
-Please keep adapters fail-open, avoid elevated privileges, and reserve sharp effects for states that require user attention.
+Keep host payload mapping in `src/host-events.mjs` pure and fixture-tested. Adapters must remain fail-open, emit no model-visible output, and never make permission decisions. Avoid elevated privileges and reserve sharp effects for states that require attention.

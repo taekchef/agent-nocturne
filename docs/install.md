@@ -1,4 +1,4 @@
-# Install Agent Light
+# Install Agent Nocturne
 
 ## Requirements
 
@@ -6,65 +6,99 @@
 - Node.js 20+
 - Xcode Command Line Tools for the native backend
 
-## 1. Clone and build
+## 1. Install the core
 
 ```bash
-git clone https://github.com/taekchef/macbook-agent-light.git
-cd macbook-agent-light
+git clone https://github.com/taekchef/agent-nocturne.git
+cd agent-nocturne
 npm run build:native
 npm link
 ```
 
-The native helper uses Apple's private `CoreBrightness.framework` dynamically. If build or probe fails, use the mock backend for development.
+The native helper dynamically uses Apple's private `CoreBrightness.framework`. If build or probe fails, use the mock backend for development.
 
-## 2. Initialize config
+Plugin caches do not contain a locally compiled native helper. Install and link the core before installing a Claude Code or Codex plugin so their hooks can find `nocturne` on `PATH`.
 
-```bash
-agent-light config init
-agent-light config show
-```
-
-Restart the daemon after editing configuration.
-
-## 3. Start daemon
+## 2. Initialize configuration
 
 ```bash
-agent-light daemon start
-agent-light status
+nocturne config init
+nocturne config show
 ```
 
-## 4. Install Pi extension
+Agent Nocturne keeps the compatibility path `~/Library/Application Support/AgentLight/config.json`; existing Agent Light users do not need a migration.
 
-Run this from the cloned repository:
+## 3. Start the daemon
+
+```bash
+nocturne daemon start
+nocturne status
+```
+
+## 4. Install the Pi extension
+
+From the cloned repository:
 
 ```bash
 mkdir -p ~/.pi/agent/extensions
-ln -sf "$PWD/adapters/pi/agent-light.ts" ~/.pi/agent/extensions/agent-light.ts
+ln -sf "$PWD/adapters/pi/agent-light.ts" ~/.pi/agent/extensions/agent-nocturne.ts
 ```
 
-Restart Pi or run `/reload`.
+Remove the old `~/.pi/agent/extensions/agent-light.ts` symlink if it points to the same adapter, otherwise Pi would load it twice. Restart Pi or run `/reload`.
 
-## 5. Test
+## 5. Install the Claude Code plugin
 
 ```bash
-agent-light test thinking --duration 3
-agent-light test done --duration 1
-agent-light restore
+claude plugin marketplace add taekchef/agent-nocturne
+claude plugin install agent-nocturne@agent-nocturne
 ```
 
-## Experimental adapters
+Verify with `/plugin` or:
 
-Claude Code and Codex adapter packages live under `adapters/`. Their hook scripts have mock smoke coverage, but installation and host behavior can vary by host version. Review the included manifests before enabling them globally.
+```bash
+claude plugin list
+```
 
-Set `AGENT_LIGHT_BIN` to an explicit `bin/agent-light.mjs` path if an adapter cannot resolve the repository-local CLI or the global `agent-light` command.
+If a configuration manager such as CC Switch regenerates Claude settings, preserve these two user-level fields:
+
+- `enabledPlugins["agent-nocturne@agent-nocturne"]`
+- `extraKnownMarketplaces["agent-nocturne"]`
+
+Do not replace unrelated `env`, `model`, status-line, or routing fields.
+
+## 6. Install the Codex plugin
+
+```bash
+codex plugin marketplace add taekchef/agent-nocturne --ref main
+codex plugin add agent-nocturne@agent-nocturne
+```
+
+Open `/hooks`, inspect the commands under Agent Nocturne, and trust their current hashes. Start a new Codex CLI session or Desktop conversation afterward.
+
+If another application regenerates `~/.codex/config.toml`, preserve only the Agent Nocturne marketplace and plugin entries; do not replace model, provider, approval, sandbox, or routing configuration.
+
+## 7. Test
+
+```bash
+nocturne test thinking --duration 3
+nocturne test done --duration 1
+nocturne restore
+```
 
 ## Uninstall / rollback
 
 ```bash
-agent-light restore
-agent-light daemon stop
-rm -f ~/.pi/agent/extensions/agent-light.ts
-npm unlink -g agent-light
+nocturne restore
+nocturne daemon stop
+rm -f ~/.pi/agent/extensions/agent-nocturne.ts
+
+claude plugin uninstall agent-nocturne@agent-nocturne
+claude plugin marketplace remove agent-nocturne
+
+codex plugin remove agent-nocturne@agent-nocturne
+codex plugin marketplace remove agent-nocturne
+
+npm unlink -g agent-nocturne
 ```
 
-Remove Claude Code or Codex plugin installs separately if enabled.
+The legacy `agent-light` CLI alias and `AgentLight` data directory can remain during transition. Remove the data directory only if you deliberately want to delete local configuration and logs.

@@ -53,6 +53,7 @@ export class AgentLightStateMachine {
         return;
       case "thinking":
         session.activeTurn = true;
+        session.toolCount = 0;
         session.latch = "thinking";
         session.latchStartedAt = now;
         session.expiresAt = now + Math.max(1_000, event.ttlMs ?? 120_000);
@@ -74,6 +75,16 @@ export class AgentLightStateMachine {
           session.latch = "tool";
           this.sessions.set(key, session);
         } else if (session.activeTurn) {
+          session.latch = "thinking";
+          session.latchStartedAt = now;
+          this.sessions.set(key, session);
+        } else {
+          this.sessions.delete(key);
+        }
+        return;
+      case "tool-batch-end":
+        session.toolCount = 0;
+        if (session.activeTurn) {
           session.latch = "thinking";
           session.latchStartedAt = now;
           this.sessions.set(key, session);
@@ -105,6 +116,12 @@ export class AgentLightStateMachine {
         return;
       case "permission":
       case "waiting-input":
+        session.toolCount = 0;
+        session.latch = event.event;
+        session.latchStartedAt = now;
+        session.activeTurn = true;
+        this.sessions.set(key, session);
+        return;
       case "blocked":
       case "compact":
       case "background":

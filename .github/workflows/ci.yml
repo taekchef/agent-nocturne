@@ -20,6 +20,8 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: npm run check
       - run: npm test
+      - if: matrix.node == 24
+        run: npx --yes @anthropic-ai/claude-code@2.1.211 plugin validate --strict .
       - run: npm pack --dry-run
 
   native-build:

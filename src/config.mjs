@@ -58,11 +58,12 @@ export async function loadConfig() {
     config = mergeDeep(DEFAULT_CONFIG, parsed);
   }
 
-  if (process.env.AGENT_LIGHT_BACKEND) {
-    config.backend = process.env.AGENT_LIGHT_BACKEND;
-  }
-  if (process.env.AGENT_LIGHT_ENABLED) {
-    config.enabled = !["0", "false", "no", "off"].includes(process.env.AGENT_LIGHT_ENABLED.toLowerCase());
+  const backend = process.env.NOCTURNE_BACKEND || process.env.AGENT_LIGHT_BACKEND;
+  if (backend) config.backend = backend;
+
+  const enabled = process.env.NOCTURNE_ENABLED || process.env.AGENT_LIGHT_ENABLED;
+  if (enabled) {
+    config.enabled = !["0", "false", "no", "off"].includes(enabled.toLowerCase());
   }
 
   config.maxBrightness = clampConfigNumber(config.maxBrightness, 0, 1, DEFAULT_CONFIG.maxBrightness);

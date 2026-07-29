@@ -1,8 +1,0 @@
-{
-  "name": "agent-light",
-  "version": "0.1.0",
-  "description": "MacBook keyboard-backlight status feedback for Claude Code.",
-  "author": "taekchef",
-  "license": "MIT",
-  "hooks": "hooks.json"
-}

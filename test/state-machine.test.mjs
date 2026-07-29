@@ -65,3 +65,28 @@ test("recoverable tool errors are muted and return to the active tool state", ()
   assert.equal(machine.visible(now + 610).state, "tool-error");
   assert.equal(machine.visible(now + 1_200).state, "tool");
 });
+
+test("tool-batch-end reconciles missing per-tool completions", () => {
+  const machine = new AgentLightStateMachine();
+  const now = 9_000;
+  machine.apply(createEvent({ event: "thinking", agent: "claude", sessionId: "s" }), now);
+  machine.apply(createEvent({ event: "tool-start", agent: "claude", sessionId: "s" }), now + 10);
+  machine.apply(createEvent({ event: "tool-start", agent: "claude", sessionId: "s" }), now + 20);
+  machine.apply(createEvent({ event: "tool-batch-end", agent: "claude", sessionId: "s" }), now + 700);
+  const snapshot = machine.snapshot(now + 800);
+  assert.equal(snapshot.visible.state, "thinking");
+  assert.equal(snapshot.sessions[0].toolCount, 0);
+});
+
+test("a permission request clears the provisional tool count", () => {
+  const machine = new AgentLightStateMachine();
+  const now = 11_000;
+  machine.apply(createEvent({ event: "thinking", agent: "codex", sessionId: "s" }), now);
+  machine.apply(createEvent({ event: "tool-start", agent: "codex", sessionId: "s" }), now + 10);
+  machine.apply(createEvent({ event: "permission", agent: "codex", sessionId: "s" }), now + 20);
+  machine.apply(createEvent({ event: "tool-start", agent: "codex", sessionId: "s" }), now + 700);
+  machine.apply(createEvent({ event: "tool-end", agent: "codex", sessionId: "s" }), now + 1_300);
+  const snapshot = machine.snapshot(now + 1_900);
+  assert.equal(snapshot.visible.state, "thinking");
+  assert.equal(snapshot.sessions[0].toolCount, 0);
+});

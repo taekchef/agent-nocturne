@@ -1,92 +1,127 @@
 {
+  "description": "Agent Nocturne lifecycle feedback for Codex.",
   "hooks": {
-    "UserPromptSubmit": [
+    "SessionStart": [
       {
-        "matcher": "",
+        "matcher": "startup|resume|clear|compact",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"./scripts/hook.mjs\" UserPromptSubmit",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"./scripts/hook.mjs\" PreToolUse",
-            "async": true,
-            "timeout": 1
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node \"./scripts/hook.mjs\" PostToolUse",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "PermissionRequest": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"./scripts/hook.mjs\" PermissionRequest",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "PreCompact": [
       {
-        "matcher": "",
+        "matcher": "manual|auto",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"./scripts/hook.mjs\" PreCompact",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "PostCompact": [
       {
-        "matcher": "",
+        "matcher": "manual|auto",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"./scripts/hook.mjs\" PostCompact",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "Stop": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"./scripts/hook.mjs\" Stop",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "matcher": "other",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${PLUGIN_ROOT}/adapters/codex/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }

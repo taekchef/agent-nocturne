@@ -3,18 +3,18 @@ import { createHash } from "node:crypto";
 import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
-const LOCAL_AGENT_LIGHT_BIN = fileURLToPath(new URL("../../bin/agent-light.mjs", import.meta.url));
-const AGENT_LIGHT_BIN = process.env.AGENT_LIGHT_BIN || (existsSync(LOCAL_AGENT_LIGHT_BIN) ? LOCAL_AGENT_LIGHT_BIN : undefined);
-const AGENT_LIGHT_DISABLED = /^(1|true|yes|on)$/i.test(process.env.AGENT_LIGHT_DISABLE_PI || "");
+const LOCAL_NOCTURNE_BIN = fileURLToPath(new URL("../../bin/nocturne.mjs", import.meta.url));
+const NOCTURNE_BIN = process.env.NOCTURNE_BIN || process.env.AGENT_LIGHT_BIN || (existsSync(LOCAL_NOCTURNE_BIN) ? LOCAL_NOCTURNE_BIN : undefined);
+const NOCTURNE_DISABLED = /^(1|true|yes|on)$/i.test(process.env.NOCTURNE_DISABLE_PI || process.env.AGENT_LIGHT_DISABLE_PI || "");
 
 export default function (pi: ExtensionAPI) {
   let notifyQueue: Promise<unknown> = Promise.resolve();
 
   function fire(ctx: ExtensionContext, event: string, extra: Record<string, string | number | boolean | undefined> = {}) {
-    if (AGENT_LIGHT_DISABLED) return;
+    if (NOCTURNE_DISABLED) return;
 
     const args = [
-      ...(AGENT_LIGHT_BIN ? [AGENT_LIGHT_BIN] : []),
+      ...(NOCTURNE_BIN ? [NOCTURNE_BIN] : []),
       "notify",
       event,
       "--agent",
@@ -33,7 +33,7 @@ export default function (pi: ExtensionAPI) {
     }
 
     notifyQueue = notifyQueue
-      .then(() => pi.exec(AGENT_LIGHT_BIN ? process.execPath : "agent-light", args, { timeout: 1000 }))
+      .then(() => pi.exec(NOCTURNE_BIN ? process.execPath : "nocturne", args, { timeout: 1000 }))
       .catch(() => {
         // Fail open: keyboard feedback must never interrupt Pi.
       });

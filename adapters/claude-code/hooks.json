@@ -1,4 +1,5 @@
 {
+  "description": "Agent Nocturne lifecycle feedback for Claude Code.",
   "hooks": {
     "SessionStart": [
       {
@@ -6,61 +7,96 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.mjs\" SessionStart",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "UserPromptSubmit": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.mjs\" UserPromptSubmit",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.mjs\" PreToolUse",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "PermissionDenied": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "PostToolUse": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.mjs\" PostToolUse",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "PostToolUseFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "PostToolBatch": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "Notification": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.mjs\" Notification",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
@@ -71,35 +107,75 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.mjs\" PreCompact",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
-    "Stop": [
+    "PostCompact": [
       {
-        "matcher": "",
+        "matcher": "manual|auto",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.mjs\" Stop",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }
     ],
     "SubagentStop": [
       {
-        "matcher": "",
         "hooks": [
           {
             "type": "command",
-            "command": "node \"${CLAUDE_PLUGIN_ROOT}/scripts/hook.mjs\" SubagentStop",
-            "async": true,
-            "timeout": 1
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
+          }
+        ]
+      }
+    ],
+    "SessionEnd": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"${CLAUDE_PLUGIN_ROOT}/adapters/claude-code/scripts/hook.mjs\"",
+            "timeout": 2
           }
         ]
       }

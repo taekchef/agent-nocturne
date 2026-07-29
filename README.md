@@ -1,23 +1,28 @@
-# Agent Light for MacBook
+# Agent Nocturne
 
-Agent Light turns the built-in MacBook keyboard backlight into a calm, local status indicator for coding agents.
+> A nocturne for your coding agent.
 
-It uses cadence—not color—to distinguish normal work, tool activity, requests for attention, completion, and failure. The built-in keyboard backlight supports global brightness only; Agent Light does not provide RGB or per-key effects.
+Agent Nocturne turns the built-in MacBook keyboard backlight into a calm, local status language for Pi, Claude Code, and Codex.
+
+It uses cadence, not color, to distinguish thought, tool activity, requests for attention, completion, and failure. A MacBook keyboard exposes one global brightness value, so Agent Nocturne does not claim RGB or per-key effects.
 
 ## Support status
 
 | Integration | Status |
 |---|---|
 | Pi | Verified with mock and native backends |
-| Claude Code hooks | Experimental; hook-script smoke tested |
-| Codex CLI/App hooks | Experimental; packaging included, host validation pending |
+| Claude Code | Official plugin; strict manifest and hook fixtures verified |
+| Codex CLI | Official plugin; hook fixtures verified |
+| Codex Desktop | Uses the shared Codex plugin; live Desktop acceptance pending |
 
-## Lighting language
+Adapters are fail-open. If Agent Nocturne or its daemon is unavailable, the coding agent continues normally.
+
+## Nocturne lighting language
 
 | State/event | Default effect |
 |---|---|
-| `thinking` | slow asymmetric 4.8s breathing |
-| `tool-start` / `tool` | one batch-entry acknowledgement, then a dim active pulse |
+| `thinking` | slow asymmetric 4.8s breath |
+| `tool-start` / `tool` | one batch acknowledgement, then a dim active pulse |
 | `tool-error` | one muted dip for a recoverable tool failure |
 | `permission` | urgent high-contrast blink |
 | `waiting-input` | two reminder taps |
@@ -29,7 +34,7 @@ It uses cadence—not color—to distinguish normal work, tool activity, request
 | `cancelled` | fade-down pulse |
 | `idle` | restore the latest user brightness baseline |
 
-Parallel tools are grouped into one batch, so routine reads and shell calls do not repeatedly flash the keyboard. Recoverable tool failures remain distinct from terminal agent failures.
+Parallel tools form one batch, so routine reads and shell calls do not repeatedly flash the keyboard. Recoverable tool failures remain distinct from terminal agent failures.
 
 ## Requirements
 
@@ -38,81 +43,100 @@ Parallel tools are grouped into one batch, so routine reads and shell calls do n
 - Xcode Command Line Tools (`clang`) for the native backend
 
 > [!WARNING]
-> The native helper dynamically uses Apple's private `CoreBrightness.framework`. It requires no kernel extension or elevated privileges, but Apple may change or remove this API in a future macOS release. Use `agent-light restore` to recover the captured brightness and the mock backend when native control is unavailable.
+> The native helper dynamically uses Apple's private `CoreBrightness.framework`. It requires no kernel extension or elevated privileges, but Apple may change or remove this API in a future macOS release. Use `nocturne restore` to recover the captured brightness and the mock backend when native control is unavailable.
 
-## Install from source
+## Install the core
 
 ```bash
-git clone https://github.com/taekchef/macbook-agent-light.git
-cd macbook-agent-light
+git clone https://github.com/taekchef/agent-nocturne.git
+cd agent-nocturne
 npm run build:native
 npm link
-agent-light config init
-agent-light daemon start
-agent-light status
+nocturne config init
+nocturne daemon start
+nocturne status
 ```
+
+The legacy `agent-light` command remains an alias. Existing configuration, logs, socket names, and the `AgentLight` application-support directory are intentionally retained for compatibility.
 
 Test the hardware and restore the original brightness:
 
 ```bash
-agent-light test thinking --duration 3
-agent-light test done --duration 1
-agent-light restore
+nocturne test thinking --duration 3
+nocturne test done --duration 1
+nocturne restore
 ```
 
-Use the mock backend while developing or testing adapters:
+Use the mock backend while developing:
 
 ```bash
-AGENT_LIGHT_BACKEND=mock agent-light test thinking --duration 2
-AGENT_LIGHT_BACKEND=mock agent-light status
+NOCTURNE_BACKEND=mock nocturne test thinking --duration 2
+NOCTURNE_BACKEND=mock nocturne status
 ```
 
-## Pi adapter
+## Pi
 
 From the cloned repository:
 
 ```bash
 mkdir -p ~/.pi/agent/extensions
-ln -sf "$PWD/adapters/pi/agent-light.ts" ~/.pi/agent/extensions/agent-light.ts
+ln -sf "$PWD/adapters/pi/agent-light.ts" ~/.pi/agent/extensions/agent-nocturne.ts
 ```
 
-Run `/reload` in Pi or restart Pi. The adapter is fail-open: lighting failures never interrupt the agent.
+Run `/reload` in Pi or restart Pi. Disable it temporarily with `NOCTURNE_DISABLE_PI=1 pi`.
 
-To disable it temporarily:
+## Claude Code
+
+Install the core first, then the official plugin:
 
 ```bash
-AGENT_LIGHT_DISABLE_PI=1 pi
+claude plugin marketplace add taekchef/agent-nocturne
+claude plugin install agent-nocturne@agent-nocturne
 ```
+
+The plugin observes lifecycle hooks only. It does not add prompt context or make permission decisions.
+
+## Codex CLI and Desktop
+
+Install the core first, then the official plugin:
+
+```bash
+codex plugin marketplace add taekchef/agent-nocturne --ref main
+codex plugin add agent-nocturne@agent-nocturne
+```
+
+Open `/hooks` in Codex and review/trust the Agent Nocturne hook definitions. Codex hashes non-managed hooks; changed hooks require review again. Start a new CLI session or Desktop conversation after enabling the plugin.
+
+Codex currently exposes non-zero tool outcomes through `PostToolUse`, but has no CLI hook equivalent to Claude Code's terminal `StopFailure`. Agent Nocturne therefore does not claim terminal-failure parity for Codex CLI.
 
 ## Commands
 
 ```bash
-agent-light notify thinking --agent pi --session abc
-agent-light notify tool-start --agent pi --tool bash
-agent-light notify tool-error --agent pi --tool bash
-agent-light notify tool-end --agent pi --tool bash
-agent-light notify permission --agent codex
-agent-light notify done --agent claude
-agent-light notify error --agent pi --terminal
-agent-light notify idle --agent pi
+nocturne notify thinking --agent pi --session abc
+nocturne notify tool-start --agent pi --tool Bash
+nocturne notify tool-error tool-end --agent pi --tool Bash
+nocturne notify permission --agent codex
+nocturne notify done --agent claude
+nocturne notify error --agent pi --terminal
+nocturne notify idle --agent pi
 
-agent-light status
-agent-light test thinking --duration 5
-agent-light restore
-agent-light daemon start
-agent-light daemon stop
-agent-light config show
+nocturne status
+nocturne test thinking --duration 5
+nocturne restore
+nocturne daemon start
+nocturne daemon stop
+nocturne config show
 ```
 
 ## Configuration
 
-Configuration lives at:
+Compatibility path:
 
 ```text
 ~/Library/Application Support/AgentLight/config.json
 ```
 
-The default calm profile is equivalent to:
+The default Nocturne profile is equivalent to:
 
 ```json
 {
@@ -130,41 +154,43 @@ The default calm profile is equivalent to:
 }
 ```
 
-Restart the daemon after changing configuration. If the captured baseline is `0`, animations still temporarily light the keyboard by default and restore it to `0` on idle. Set `respectKeyboardOff` to `true` to keep the keyboard dark.
+Restart the daemon after changing configuration. If the captured baseline is `0`, animations temporarily light the keyboard by default and restore it to `0` on idle. Set `respectKeyboardOff` to `true` to keep it dark.
 
 ## Architecture
 
 ```text
 Pi / Claude Code / Codex adapter
-            │ local JSON event
-            ▼
-      agent-light CLI
-            │ Unix socket (mode 0600)
-            ▼
-     agent-light daemon
-            │ serialized brightness writes
-            ▼
- CoreBrightness helper or mock backend
+              │ local normalized event
+              ▼
+        nocturne CLI
+              │ Unix socket (mode 0600)
+              ▼
+     Agent Nocturne daemon
+              │ serialized brightness writes
+              ▼
+  CoreBrightness helper or mock backend
 ```
 
-The daemon tracks state per agent session, applies priorities across concurrent agents, expires stale states with TTLs, and refreshes the user's brightness baseline while idle. Active animation ticks run at 80ms; idle polling drops to 1.5s.
+The daemon tracks state per agent session, prioritizes concurrent agents, expires stale states, and refreshes the user's brightness baseline while idle. Active animation ticks run at 80ms; idle polling drops to 1.5s.
 
 ## Privacy and safety
 
-- All processing is local; Agent Light makes no network requests.
-- Logs may contain local working-directory paths, agent names, tool names, and opaque session IDs.
-- Logs are stored at `~/Library/Logs/AgentLight/agent-light.log` and are never uploaded by the project.
-- The Unix socket is created with user-only permissions (`0600`).
-- Adapters fail open and use a one-second timeout.
-- `agent-light restore` restores the captured baseline brightness.
+- Runtime processing is local; Agent Nocturne makes no network requests.
+- Logs may contain working-directory paths, agent names, tool names, and opaque session IDs.
+- Compatibility log path: `~/Library/Logs/AgentLight/agent-light.log`.
+- Logs are never uploaded by the project.
+- The Unix socket is user-only (`0600`).
+- Hooks emit no model-visible stdout and never approve or deny tools.
+- `nocturne restore` restores the captured baseline brightness.
 
 ## Development
 
 ```bash
 npm run check
 npm test
+npm run validate:claude
 npm run build:native
-AGENT_LIGHT_BACKEND=mock npm run smoke:mock
+NOCTURNE_BACKEND=mock npm run smoke:mock
 ```
 
 See [installation notes](docs/install.md) and [troubleshooting](docs/troubleshooting.md).

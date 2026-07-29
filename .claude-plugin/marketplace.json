@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "agent-nocturne",
+  "description": "Agent Nocturne plugins for calm local coding-agent status feedback.",
+  "owner": {
+    "name": "taekchef",
+    "url": "https://github.com/taekchef"
+  },
+  "plugins": [
+    {
+      "name": "agent-nocturne",
+      "description": "MacBook keyboard-backlight status feedback for Claude Code.",
+      "source": "./",
+      "category": "productivity"
+    }
+  ]
+}

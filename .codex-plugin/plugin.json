@@ -1,0 +1,25 @@
+{
+  "name": "agent-nocturne",
+  "version": "0.2.0",
+  "description": "Calm MacBook keyboard-backlight status feedback for Codex.",
+  "author": {
+    "name": "taekchef",
+    "url": "https://github.com/taekchef"
+  },
+  "homepage": "https://github.com/taekchef/agent-nocturne",
+  "repository": "https://github.com/taekchef/agent-nocturne",
+  "license": "MIT",
+  "keywords": ["macos", "keyboard-backlight", "status", "hooks"],
+  "hooks": "./adapters/codex/hooks.json",
+  "interface": {
+    "displayName": "Agent Nocturne",
+    "shortDescription": "Calm keyboard-backlight status for Codex",
+    "longDescription": "Forwards local Codex lifecycle hooks to Agent Nocturne without changing prompts or permission decisions.",
+    "developerName": "taekchef",
+    "category": "Developer Tools",
+    "capabilities": ["Lifecycle hooks"],
+    "defaultPrompt": ["Use Agent Nocturne keyboard-backlight status feedback"],
+    "brandColor": "#111014",
+    "screenshots": []
+  }
+}
