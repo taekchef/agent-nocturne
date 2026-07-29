@@ -1,0 +1,47 @@
+{
+  "name": "agent-light",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Local keyboard-backlight status bridge for coding agents.",
+  "author": "changfenhuang (taekchef)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taekchef/macbook-agent-light.git"
+  },
+  "homepage": "https://github.com/taekchef/macbook-agent-light#readme",
+  "bugs": {
+    "url": "https://github.com/taekchef/macbook-agent-light/issues"
+  },
+  "type": "module",
+  "bin": {
+    "agent-light": "./bin/agent-light.mjs"
+  },
+  "scripts": {
+    "build:native": "mkdir -p native/build && clang -fobjc-arc -framework Foundation native/agent-light-backlight.m -o native/build/agent-light-backlight",
+    "check": "node --check bin/agent-light.mjs && node --check src/*.mjs && node --check src/backends/*.mjs && node --check adapters/claude-code/scripts/*.mjs && node --check adapters/codex/scripts/*.mjs",
+    "test": "node --test",
+    "smoke:mock": "AGENT_LIGHT_BACKEND=mock node ./bin/agent-light.mjs test done --duration 1"
+  },
+  "keywords": [
+    "macos",
+    "keyboard-backlight",
+    "coding-agent",
+    "pi",
+    "claude-code",
+    "codex"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "files": [
+    "bin",
+    "src",
+    "native/agent-light-backlight.m",
+    "adapters",
+    "docs",
+    "README.md",
+    "CONTRIBUTING.md",
+    "LICENSE"
+  ]
+}

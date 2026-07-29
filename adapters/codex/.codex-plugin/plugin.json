@@ -1,0 +1,29 @@
+{
+  "name": "agent-light",
+  "version": "0.1.0",
+  "description": "MacBook keyboard-backlight status feedback for Codex CLI and Codex App.",
+  "author": {
+    "name": "taekchef"
+  },
+  "license": "MIT",
+  "keywords": [
+    "keyboard-backlight",
+    "status",
+    "hooks"
+  ],
+  "interface": {
+    "displayName": "Agent Light",
+    "shortDescription": "Keyboard backlight status feedback for Codex",
+    "longDescription": "Uses Codex plugin hooks to forward local agent lifecycle events to the agent-light daemon.",
+    "developerName": "taekchef",
+    "category": "Developer Tools",
+    "capabilities": [
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Use keyboard backlight status feedback while coding"
+    ],
+    "brandColor": "#A7F3D0",
+    "screenshots": []
+  }
+}

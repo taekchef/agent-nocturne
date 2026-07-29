@@ -1,0 +1,95 @@
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"./scripts/hook.mjs\" UserPromptSubmit",
+            "async": true,
+            "timeout": 1
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"./scripts/hook.mjs\" PreToolUse",
+            "async": true,
+            "timeout": 1
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"./scripts/hook.mjs\" PostToolUse",
+            "async": true,
+            "timeout": 1
+          }
+        ]
+      }
+    ],
+    "PermissionRequest": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"./scripts/hook.mjs\" PermissionRequest",
+            "async": true,
+            "timeout": 1
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"./scripts/hook.mjs\" PreCompact",
+            "async": true,
+            "timeout": 1
+          }
+        ]
+      }
+    ],
+    "PostCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"./scripts/hook.mjs\" PostCompact",
+            "async": true,
+            "timeout": 1
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"./scripts/hook.mjs\" Stop",
+            "async": true,
+            "timeout": 1
+          }
+        ]
+      }
+    ]
+  }
+}
