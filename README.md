@@ -2,7 +2,7 @@
 
 > A nocturne for your coding agent.
 
-[Website](https://taekchef.github.io/agent-nocturne/) · [中文](https://taekchef.github.io/agent-nocturne/zh/) · [Install](https://taekchef.github.io/agent-nocturne/install/)
+[Website](https://taekchef.github.io/agent-nocturne/) · [中文](https://taekchef.github.io/agent-nocturne/?lang=zh) · [Install](https://taekchef.github.io/agent-nocturne/#install)
 
 Agent Nocturne turns the built-in MacBook keyboard backlight into a calm, local status language for Pi, Claude Code, and Codex.
 

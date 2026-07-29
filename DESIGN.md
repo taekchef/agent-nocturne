@@ -1,69 +1,114 @@
-# Agent Nocturne site design
+# Agent Nocturne Design System
 
-## 1. Visual theme and atmosphere
+## Product thesis
 
-A light editorial product sheet for a small, precise Mac utility. The visual system is quiet and nearly monochrome. Quality comes from proportion, typography, alignment, and the live keyboard-light demonstration, not from gradients, dark surfaces, glass, or decorative effects.
+Agent Nocturne turns the MacBook keyboard backlight into a local status signal for coding agents. The website must explain that idea on one page and prove it with a physically credible keyboard demonstration.
 
-## 2. Color palette and roles
+## Information architecture
 
-| Token | Value | Role |
-|---|---|---|
-| Canvas | `oklch(97.4% 0.004 100)` | Page background |
-| Paper | `oklch(99% 0.002 100)` | Keyboard and code surfaces |
-| Ink | `oklch(20% 0.008 90)` | Primary text and buttons |
-| Muted | `oklch(48% 0.008 90)` | Secondary text |
-| Hairline | `oklch(86% 0.006 100)` | Structural dividers |
-| Signal | `oklch(43% 0.035 155)` | Active state and focus only |
+There is one public product page.
 
-## 3. Typography rules
+1. Hero: product statement and live keyboard demonstration.
+2. Install: local core plus Pi, Claude Code, and Codex adapter tabs.
+3. Facts and footer: local runtime, socket mode, fail-open behavior, hardware limitation, source and license.
 
-- Display and body: `Helvetica Neue`, `Helvetica`, `Arial`, system sans.
-- Commands: `SFMono-Regular`, `Menlo`, `Consolas`, monospace.
-- Display sizes use weight 400 and `-0.035em` to `-0.022em` tracking.
-- Body copy uses 16-18px, line-height 1.55-1.7, max width 62ch.
-- Sentence case everywhere. No decorative uppercase section numbering.
+English and Chinese switch in place. Lighting states stay inside the hero. Installation stays below the hero. Do not create separate Language, Install, or locale page trees.
 
-## 4. Component styling
+## Environment modes
 
-- Navigation: one 1px bottom hairline, no filled container.
-- Buttons: 2px radius, 44px minimum height, black primary and underlined text secondary.
-- State selector: plain text buttons in a vertical or horizontal list, active state marked by ink weight and Signal underline.
-- Code: square paper surface with a copy action aligned to the command, not a floating card.
-- Keyboard: functional interactive demonstration with shallow key geometry and animated legend opacity.
+### Default
 
-## 5. Layout principles
+The page is a light editorial surface. Only the keyboard stage is dark because white backlight needs a dark optical environment.
 
-- Maximum content width 1320px.
-- Twelve-column desktop grid, strict single column below 760px.
-- Home hero uses an asymmetric 5/7 split.
-- Section spacing follows 72 / 104 / 144px responsive steps.
-- Content groups use whitespace and hairlines, not generic cards.
+### Dark room
 
-## 6. Depth and elevation
+A user-controlled Room lights button may dim the full page to neutral near-black. The keyboard becomes the center light source. This mode must remain neutral, photographic, and quiet. It is not a blue nocturnal theme and must not add RGB color, glow decoration, or technology motifs.
 
-The site is flat. Structural depth comes from background steps and 1px dividers. Only the keyboard surface may use a shallow inset shadow because it represents a physical object.
+## Keyboard model
 
-## 7. Do and do not
+The hardware exposes one global keyboard brightness value.
 
-- Do make the live lighting behavior the visual anchor.
-- Do keep visible claims grounded in the repository.
-- Do use one Signal color for focus and active state.
-- Do not use dark blue, black hero backgrounds, glow, mesh, or gradient text.
-- Do not use pill badges, equal feature cards, fake testimonials, or fake metrics.
-- Do not use stock imagery or fake screenshots.
-- Do not use em dash characters in visible copy.
+- Keycaps are near-black and never move, scale, fade, or change size.
+- All legends read one shared `--backlight` value.
+- Legends emit neutral white light.
+- A short legend halo, weak key-gap spill, and weaker deck reflection may follow the same global value.
+- No key may animate independently.
+- No wave, chase, RGB, per-key color, or keypress simulation.
+- The stage must remain clearly darker than the surrounding page in default mode.
 
-## 8. Responsive behavior
+## Cadence
 
-- At 760px, all asymmetric grids collapse to one column.
-- Mobile navigation uses an inline Menu button and a simple expanded link list.
-- Interactive targets are at least 40px.
-- Keyboard demonstration scrolls nowhere and scales within viewport width.
-- At 320px, CTAs retain natural width and never wrap.
+- Thinking: 4.8 second asymmetric breath, 0.03 to 0.80.
+- Tool: 1.8 second low pulse, 0.10 to 0.32.
+- Permission: 540 ms global attention blink.
+- Waiting: two global taps every 2.5 seconds.
+- Done: one 1.2 second completion exhale.
+- Error: four finite short global flashes.
+- Reduced motion: static medium-low backlight.
 
-## 9. Agent prompt guide
+Only `--backlight` changes in the keyboard animation. Key geometry and typography remain fixed.
 
-- Home hero: canvas `oklch(97.4% 0.004 100)`, 12-column grid, 5/7 split, 64px headline at weight 400, line-height 0.96, tracking `-0.035em`, one black 2px-radius CTA, interactive keyboard on the right.
-- State selector: no card, no pill, 16px labels, active text `oklch(20% 0.008 90)`, inactive text `oklch(48% 0.008 90)`, 2px Signal underline, 40px hit area.
-- Code block: Paper background, 1px Hairline divider, 14px mono, copy action at right, 2px radius, no drop shadow.
-- Footer: one top hairline, two-column text layout, 14px muted links, no multi-column sitemap.
+## Color
+
+### Light page
+
+- Canvas: `#f3f1ec`
+- Paper: `#faf9f6`
+- Ink: `#191917`
+- Muted: `#68665f`
+- Hairline: `#d7d4cc`
+- Signal: `#405a49`
+
+### Dark room
+
+- Canvas: `#080909`
+- Paper: `#101110`
+- Ink: `#f1efe8`
+- Muted: `#a09f99`
+- Hairline: `#292b29`
+
+### Keyboard
+
+- Stage: `#0a0b0b`
+- Deck: `#070708`
+- Keycap: `#111113`
+- Key edge: `#2d2e30`
+- Legend and light: neutral white
+
+Do not use blue-black, purple, gradients, glass surfaces, colored glows, or decorative shadows.
+
+## Typography
+
+- UI and display: `Helvetica Neue`, Helvetica, Arial, system fallback.
+- Chinese: system PingFang stack.
+- Commands and cadence: `SFMono-Regular`, Menlo, Consolas.
+- Headlines use light weight, tight tracking, and short line lengths.
+- Body copy stays below 65 characters per line.
+- Do not load external fonts.
+
+## Layout
+
+- Maximum shell: 1320px.
+- Desktop hero: concise copy left, keyboard stage right.
+- Mobile hero order: label, headline, complete keyboard stage, explanation, actions.
+- The full keyboard must remain inside the first 812px viewport at 320px and 375px widths.
+- Install is one compact split section, not another page.
+- Avoid generic card grids and repeated marketing sections.
+
+## Interaction
+
+- Room lights and language are reversible buttons with visible focus.
+- Room choice and language persist locally.
+- State controls use `aria-pressed`.
+- Adapter tabs support Left and Right Arrow keys.
+- Copy buttons announce success through `aria-live`.
+- No analytics, cookies, forms, remote runtime assets, or network requests.
+- Without JavaScript, navigation, English copy, installation commands, and a static lit keyboard remain visible.
+
+## Accessibility and motion
+
+- Keep a skip link and semantic heading order.
+- Minimum interactive height is 40px where space allows.
+- Never encode state with color alone. State names and cadence remain visible.
+- Honor `prefers-reduced-motion` by stopping cadence and showing a static backlight.
+- Keyboard geometry must remain identical at animation trough and peak.

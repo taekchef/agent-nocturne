@@ -19,7 +19,7 @@
   },
   "scripts": {
     "build:native": "mkdir -p native/build && clang -fobjc-arc -framework Foundation native/agent-light-backlight.m -o native/build/agent-light-backlight",
-    "check": "node --check bin/*.mjs && node --check scripts/*.mjs && node --check src/*.mjs && node --check src/backends/*.mjs && node --check adapters/claude-code/scripts/*.mjs && node --check adapters/codex/scripts/*.mjs",
+    "check": "node --check bin/*.mjs && node --check scripts/*.mjs && node --check site/app.js && node --check src/*.mjs && node --check src/backends/*.mjs && node --check adapters/claude-code/scripts/*.mjs && node --check adapters/codex/scripts/*.mjs",
     "test": "node --test",
     "check:site": "node scripts/check-site.mjs",
     "validate:claude": "claude plugin validate --strict .",
