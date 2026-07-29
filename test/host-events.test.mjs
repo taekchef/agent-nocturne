@@ -65,6 +65,9 @@ test("Codex lifecycle hooks map without pretending Stop exposes failures", () =>
 });
 
 test("Codex tool failures use structured fields instead of matching output text", () => {
+  // Codex CLI 0.145 and the tested Desktop 0.146 app-server currently send
+  // an empty string here even after Bash exits non-zero. Do not guess failure.
+  assert.deepEqual(names(mapCodexHook("PostToolUse", { tool_response: "" })), ["tool-end"]);
   assert.equal(codexToolFailed({ tool_response: { success: false } }), true);
   assert.equal(codexToolFailed({ tool_response: { result: { is_error: true } } }), true);
   assert.equal(codexToolFailed({ tool_response: { status: "failed" } }), true);

@@ -11,9 +11,9 @@ It uses cadence, not color, to distinguish thought, tool activity, requests for 
 | Integration | Status |
 |---|---|
 | Pi | Verified with mock and native backends |
-| Claude Code | Official plugin; strict manifest and hook fixtures verified |
-| Codex CLI | Official plugin; hook fixtures verified |
-| Codex Desktop | Uses the shared Codex plugin; live Desktop acceptance pending |
+| Claude Code | Official plugin; strict validation and live hook execution verified |
+| Codex CLI | Verified on 0.145.0 with normal and tool turns |
+| Codex Desktop | Verified through the bundled 0.146 app-server used by ChatGPT Desktop |
 
 Adapters are fail-open. If Agent Nocturne or its daemon is unavailable, the coding agent continues normally.
 
@@ -107,7 +107,7 @@ codex plugin add agent-nocturne@agent-nocturne
 
 Open `/hooks` in Codex and review/trust the Agent Nocturne hook definitions. Codex hashes non-managed hooks; changed hooks require review again. Start a new CLI session or Desktop conversation after enabling the plugin.
 
-Codex currently exposes non-zero tool outcomes through `PostToolUse`, but has no CLI hook equivalent to Claude Code's terminal `StopFailure`. Agent Nocturne therefore does not claim terminal-failure parity for Codex CLI.
+Codex fires `PostToolUse` after non-zero Bash exits, but Codex CLI 0.145.0 and the tested Desktop 0.146 app-server send an empty `tool_response` for that event. Agent Nocturne cannot reliably distinguish those recoverable failures from successful tools until Codex supplies structured outcome data. Codex also has no hook equivalent to Claude Code's terminal `StopFailure`; no failure parity is claimed.
 
 ## Commands
 

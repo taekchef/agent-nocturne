@@ -59,7 +59,11 @@ This is expected after installation or any hook definition change. Open `/hooks`
 
 Start a new Desktop conversation after enabling and trusting the plugin. CLI and Desktop share Codex plugin configuration, but an already-running conversation may retain its previous lifecycle configuration.
 
-Do not work around this by tailing transcripts or rollout files. Capture the Codex version and report the compatibility issue instead.
+Do not work around this by tailing transcripts or rollout files. Capture the Codex and bundled app-server versions, then report the compatibility issue.
+
+## A failed Codex command does not show the muted failure dip
+
+Codex CLI 0.145.0 and the tested Desktop 0.146 app-server fire `PostToolUse` after a non-zero Bash exit but provide an empty `tool_response`. Without a structured exit status, Agent Nocturne deliberately treats it as an ordinary `tool-end` rather than guessing from command or output text.
 
 ## Configuration changes do not appear
 
