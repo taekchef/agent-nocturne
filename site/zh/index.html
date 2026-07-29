@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Agent Nocturne 把 MacBook 内置键盘背光变成 Pi、Claude Code 与 Codex 的本地状态灯。">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Agent Nocturne">
+  <meta property="og:description" content="让 MacBook 键盘灯告诉你 Agent 的工作状态。">
+  <meta property="og:image" content="https://taekchef.github.io/agent-nocturne/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="oklch(97.4% 0.004 100)">
+  <title>Agent Nocturne</title>
+  <link rel="canonical" href="https://taekchef.github.io/agent-nocturne/zh/">
+  <link rel="alternate" hreflang="en" href="https://taekchef.github.io/agent-nocturne/">
+  <link rel="alternate" hreflang="zh-CN" href="https://taekchef.github.io/agent-nocturne/zh/">
+  <script>document.documentElement.classList.add("js")</script>
+  <link rel="stylesheet" href="../styles.css">
+  <script src="../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <header class="site-header" data-site-header>
+    <div class="shell nav-shell">
+      <a class="wordmark" href="./" aria-label="Agent Nocturne 首页">Agent Nocturne</a>
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav" data-menu-button>菜单</button>
+      <nav id="primary-nav" class="primary-nav" aria-label="主导航" data-primary-nav>
+        <a href="./language/">灯效语言</a>
+        <a href="./install/">安装</a>
+        <a href="https://github.com/taekchef/agent-nocturne">GitHub</a>
+        <a href="../" lang="en">EN</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero shell">
+      <div class="hero-copy">
+        <p class="eyebrow">MacBook 键盘状态灯</p>
+        <h1>让键盘灯告诉你进度。</h1>
+        <p class="hero-lede">本地连接 Pi、Claude Code 与 Codex。不用抬眼，也知道 Agent 正在思考、执行或等待。</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="./install/">安装</a>
+          <a class="text-link" href="https://github.com/taekchef/agent-nocturne">查看源码</a>
+        </div>
+      </div>
+
+      <div class="hero-demo demo" data-demo>
+        <div class="demo-heading">
+          <span data-state-name>思考中</span>
+          <span class="demo-cadence" data-state-cadence>4.8 秒呼吸</span>
+        </div>
+        <div class="keyboard" data-keyboard data-state="thinking" aria-label="键盘背光演示"></div>
+        <noscript><img class="keyboard-fallback" src="../keyboard.png" width="1274" height="554" alt="MacBook 键盘背光预览"></noscript>
+        <div class="state-controls state-controls-inline" aria-label="选择灯效状态">
+          <button type="button" data-state-control="thinking" aria-pressed="true">思考</button>
+          <button type="button" data-state-control="tool" aria-pressed="false">工具</button>
+          <button type="button" data-state-control="permission" aria-pressed="false">权限</button>
+          <button type="button" data-state-control="done" aria-pressed="false">完成</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="host-line" aria-label="支持的 coding agents">
+      <div class="shell host-line-inner">
+        <p>一个 daemon，三个 adapter。</p>
+        <ul>
+          <li>Pi</li>
+          <li>Claude Code</li>
+          <li>Codex</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="principle shell section-space">
+      <div class="principle-copy">
+        <h2>一种亮度，不同节奏。</h2>
+        <p>MacBook 键盘只有一个全局亮度值。Agent Nocturne 用节奏表达状态，不虚构 RGB，也不假装可以控制单独按键。</p>
+        <a class="text-link" href="./language/">查看完整灯效语言</a>
+      </div>
+      <dl class="cadence-score">
+        <div>
+          <dt>思考</dt>
+          <dd><strong>4.8 秒</strong><span>缓慢非对称呼吸</span></dd>
+        </div>
+        <div>
+          <dt>工具执行</dt>
+          <dd><strong>1.8 秒</strong><span>低亮度活动脉冲</span></dd>
+        </div>
+        <div>
+          <dt>完成</dt>
+          <dd><strong>1 次</strong><span>柔和呼气</span></dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="local-section section-space">
+      <div class="shell local-grid" id="privacy">
+        <p class="local-word" aria-hidden="true">LOCAL</p>
+        <div class="local-copy">
+          <h2>数据不会离开 Mac。</h2>
+          <p>事件只经过当前用户可访问的 Unix socket。没有账户、云服务、分析脚本，也不会向模型上下文写入内容。</p>
+          <ul class="fact-list">
+            <li><span>运行方式</span><strong>完全本地</strong></li>
+            <li><span>Socket</span><strong>权限 0600</strong></li>
+            <li><span>Adapter</span><strong>失败不阻塞</strong></li>
+            <li><span>系统权限</span><strong>无需提权</strong></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing shell section-space">
+      <div>
+        <h2>少看一眼，也不会错过。</h2>
+        <p>继续看着代码。需要你处理时，让键盘灯提醒你。</p>
+      </div>
+      <a class="button button-primary" href="./install/">安装 Agent Nocturne</a>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <p>Agent Nocturne 以 MIT License 开源。</p>
+      <nav aria-label="页脚导航">
+        <a href="./install/#privacy">隐私</a>
+        <a href="https://github.com/taekchef/agent-nocturne/blob/main/LICENSE">License</a>
+        <a href="https://github.com/taekchef/agent-nocturne">源码</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>

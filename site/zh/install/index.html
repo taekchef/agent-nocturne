@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在 MacBook 上为 Pi、Claude Code 与 Codex 安装 Agent Nocturne。">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="安装 | Agent Nocturne">
+  <meta property="og:description" content="安装一次本地 Core，再加入你使用的 coding-agent adapters。">
+  <meta property="og:image" content="https://taekchef.github.io/agent-nocturne/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="theme-color" content="oklch(97.4% 0.004 100)">
+  <title>安装 | Agent Nocturne</title>
+  <link rel="canonical" href="https://taekchef.github.io/agent-nocturne/zh/install/">
+  <link rel="alternate" hreflang="en" href="https://taekchef.github.io/agent-nocturne/install/">
+  <link rel="alternate" hreflang="zh-CN" href="https://taekchef.github.io/agent-nocturne/zh/install/">
+  <script>document.documentElement.classList.add("js")</script>
+  <link rel="stylesheet" href="../../styles.css">
+  <script src="../../app.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <header class="site-header" data-site-header>
+    <div class="shell nav-shell">
+      <a class="wordmark" href="../" aria-label="Agent Nocturne 中文首页">Agent Nocturne</a>
+      <button class="menu-button" type="button" aria-expanded="false" aria-controls="primary-nav" data-menu-button>菜单</button>
+      <nav id="primary-nav" class="primary-nav" aria-label="主导航" data-primary-nav>
+        <a href="../language/">灯效语言</a>
+        <a href="./" aria-current="page">安装</a>
+        <a href="https://github.com/taekchef/agent-nocturne">GitHub</a>
+        <a href="../../install/" lang="en">EN</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="page-intro shell install-intro">
+      <p class="eyebrow">安装</p>
+      <h1>安装一次核心，再加入需要的 Adapter。</h1>
+      <p>需要 macOS、Node.js 20 或更新版本，以及带背光键盘的 MacBook。</p>
+    </section>
+
+    <section class="install-core shell">
+      <div class="install-heading">
+        <h2>安装 Core</h2>
+        <p>Daemon 统一处理状态、节奏和亮度恢复。</p>
+      </div>
+      <div class="code-block">
+        <pre><code>git clone https://github.com/taekchef/agent-nocturne.git
+cd agent-nocturne
+npm run build:native
+npm link
+nocturne config init
+nocturne daemon start
+nocturne status</code></pre>
+        <button type="button" class="copy-button" data-copy-button aria-label="复制 Core 安装命令">复制</button>
+        <span class="copy-status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="adapter-install section-space">
+      <div class="shell adapter-grid">
+        <div>
+          <h2>添加 Adapter</h2>
+          <p>Adapter 只观察生命周期事件，不会改写 prompt，也不会替你决定权限。</p>
+          <div class="install-tabs" role="tablist" aria-label="Agent adapters">
+            <button type="button" role="tab" aria-selected="true" aria-controls="panel-pi" id="tab-pi" data-install-tab="pi">Pi</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="panel-claude" id="tab-claude" data-install-tab="claude" tabindex="-1">Claude Code</button>
+            <button type="button" role="tab" aria-selected="false" aria-controls="panel-codex" id="tab-codex" data-install-tab="codex" tabindex="-1">Codex</button>
+          </div>
+        </div>
+
+        <div class="install-panels">
+          <section id="panel-pi" role="tabpanel" aria-labelledby="tab-pi" data-install-panel="pi">
+            <h3>Pi</h3>
+            <p>链接 extension，然后在 Pi 中执行 <code>/reload</code>。</p>
+            <div class="code-block">
+              <pre><code>mkdir -p ~/.pi/agent/extensions
+ln -sf "$PWD/adapters/pi/agent-light.ts" \
+  ~/.pi/agent/extensions/agent-nocturne.ts</code></pre>
+              <button type="button" class="copy-button" data-copy-button aria-label="复制 Pi 安装命令">复制</button>
+              <span class="copy-status" aria-live="polite"></span>
+            </div>
+          </section>
+
+          <section id="panel-claude" role="tabpanel" aria-labelledby="tab-claude" data-install-panel="claude" hidden>
+            <h3>Claude Code</h3>
+            <p>从项目 marketplace 安装官方插件。</p>
+            <div class="code-block">
+              <pre><code>claude plugin marketplace add taekchef/agent-nocturne
+claude plugin install agent-nocturne@agent-nocturne</code></pre>
+              <button type="button" class="copy-button" data-copy-button aria-label="复制 Claude Code 安装命令">复制</button>
+              <span class="copy-status" aria-live="polite"></span>
+            </div>
+          </section>
+
+          <section id="panel-codex" role="tabpanel" aria-labelledby="tab-codex" data-install-panel="codex" hidden>
+            <h3>Codex CLI 与 Desktop</h3>
+            <p>安装后打开 <code>/hooks</code>，逐条审查 11 个 hook definitions。</p>
+            <div class="code-block">
+              <pre><code>codex plugin marketplace add taekchef/agent-nocturne --ref main
+codex plugin add agent-nocturne@agent-nocturne</code></pre>
+              <button type="button" class="copy-button" data-copy-button aria-label="复制 Codex 安装命令">复制</button>
+              <span class="copy-status" aria-live="polite"></span>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+
+    <section class="verify-section shell section-space">
+      <div>
+        <h2>测试，然后恢复。</h2>
+        <p>先运行一段思考呼吸和完成灯效。Restore 会回到捕获的键盘亮度。</p>
+      </div>
+      <div class="code-block code-block-compact">
+        <pre><code>nocturne test thinking --duration 3
+nocturne test done --duration 1
+nocturne restore</code></pre>
+        <button type="button" class="copy-button" data-copy-button aria-label="复制测试命令">复制</button>
+        <span class="copy-status" aria-live="polite"></span>
+      </div>
+    </section>
+
+    <section class="privacy-section section-space" id="privacy">
+      <div class="shell privacy-grid">
+        <h2>隐私来自结构本身。</h2>
+        <div>
+          <p>运行时处理全部留在 Mac。Hook 不会输出模型可见内容。Unix socket 只允许当前用户访问，Core 不可用时 Adapter 也不会阻断 Agent。</p>
+          <p>Native helper 动态调用 Apple 私有 CoreBrightness framework。它不需要 kernel extension 或提权，但未来 macOS 可能改变这个 API。</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="uninstall shell section-space">
+      <h2>干净移除。</h2>
+      <div class="code-block">
+        <pre><code>nocturne restore
+nocturne daemon stop
+claude plugin uninstall agent-nocturne@agent-nocturne
+codex plugin remove agent-nocturne@agent-nocturne
+npm unlink -g agent-nocturne</code></pre>
+        <button type="button" class="copy-button" data-copy-button aria-label="复制卸载命令">复制</button>
+        <span class="copy-status" aria-live="polite"></span>
+      </div>
+      <p class="note">兼容命令 <code>agent-light</code> 和已有 AgentLight 配置在迁移期间继续有效。</p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-inner">
+      <p>需要更多细节，可以查看仓库中的完整安装和排障文档。</p>
+      <nav aria-label="页脚导航">
+        <a href="../">首页</a>
+        <a href="https://github.com/taekchef/agent-nocturne/blob/main/docs/install.md">完整指南</a>
+        <a href="https://github.com/taekchef/agent-nocturne">源码</a>
+      </nav>
+    </div>
+  </footer>
+</body>
+</html>
