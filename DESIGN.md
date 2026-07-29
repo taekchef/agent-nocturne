@@ -52,27 +52,27 @@ Only `--backlight` changes in the keyboard animation. Key geometry and typograph
 
 ### Light page
 
-- Canvas: `#f3f1ec`
-- Paper: `#faf9f6`
-- Ink: `#191917`
-- Muted: `#68665f`
-- Hairline: `#d7d4cc`
-- Signal: `#405a49`
+- Canvas: `#f2f0ea`
+- Paper: `#faf9f5`
+- Ink: `#171714`
+- Muted: `#63615a`
+- Hairline: `#d8d5cb`
+- Signal: `#3d5a48`
 
 ### Dark room
 
 - Canvas: `#080909`
-- Paper: `#101110`
-- Ink: `#f1efe8`
-- Muted: `#a09f99`
-- Hairline: `#292b29`
+- Paper: `#0f100f`
+- Ink: `#f0eee7`
+- Muted: `#9b9a93`
+- Hairline: `#262826`
 
 ### Keyboard
 
 - Stage: `#0a0b0b`
 - Deck: `#070708`
-- Keycap: `#111113`
-- Key edge: `#2d2e30`
+- Keycap: `#121214`
+- Key edge: `#2e2f32`
 - Legend and light: neutral white
 
 Do not use blue-black, purple, gradients, glass surfaces, colored glows, or decorative shadows.
@@ -81,18 +81,22 @@ Do not use blue-black, purple, gradients, glass surfaces, colored glows, or deco
 
 - UI and display: `Helvetica Neue`, Helvetica, Arial, system fallback.
 - Chinese: system PingFang stack.
-- Commands and cadence: `SFMono-Regular`, Menlo, Consolas.
-- Headlines use light weight, tight tracking, and short line lengths.
+- Commands, cadence, eyebrows, nav, and spec labels: `SFMono-Regular`, Menlo, Consolas, uppercase with wide tracking. Chinese labels keep hanzi in the system stack and only the Latin prefixes render mono.
+- Headlines use medium weight (500), tight tracking, and short line lengths.
+- Chinese headlines are sized down relative to Latin (max 3.6rem) and constrained to whole-phrase line breaks.
 - Body copy stays below 65 characters per line.
 - Do not load external fonts.
 
 ## Layout
 
-- Maximum shell: 1320px.
-- Desktop hero: concise copy left, keyboard stage right.
-- Mobile hero order: label, headline, complete keyboard stage, explanation, actions.
+- Maximum shell: 1280px.
+- Desktop hero: concise copy left, keyboard stage right. Chinese pages widen the copy column slightly so the headline breaks on whole phrases.
+- Mobile hero order: label, headline, complete keyboard stage, explanation, actions, spec line.
 - The full keyboard must remain inside the first 812px viewport at 320px and 375px widths.
 - Install is one compact split section, not another page.
+- Code blocks are near-black terminal panels with light text, matching the keyboard deck. They stay dark in both room modes.
+- Lighting states are presented as a numbered index (CSS counters) under the keyboard, doubling as the state language documentation.
+- The keyboard renders a half-height function row, matching MacBook hardware.
 - Avoid generic card grids and repeated marketing sections.
 
 ## Interaction

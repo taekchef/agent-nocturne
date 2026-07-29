@@ -9,7 +9,7 @@
   <meta property="og:description" content="See what your coding agent is doing through the MacBook keyboard backlight.">
   <meta property="og:image" content="https://taekchef.github.io/agent-nocturne/og.png">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="theme-color" content="#f3f1ec">
+  <meta name="theme-color" content="#f2f0ea">
   <title>Agent Nocturne</title>
   <link rel="canonical" href="https://taekchef.github.io/agent-nocturne/">
   <script>document.documentElement.classList.add("js")</script>
@@ -21,12 +21,12 @@
 
   <header class="site-header">
     <div class="shell header-inner">
-      <a class="wordmark" href="./" aria-label="Agent Nocturne home">Agent Nocturne</a>
+      <a class="wordmark" href="./" aria-label="Agent Nocturne home">Agent Nocturne<span class="version">v0.2</span></a>
       <nav class="header-actions" aria-label="Site controls">
         <a class="header-link" href="#install" data-i18n="installNav">Install</a>
         <button class="utility-button js-only" type="button" data-room-toggle aria-pressed="false">Dark room</button>
         <button class="utility-button js-only" type="button" data-language-toggle aria-label="切换为中文">中文</button>
-        <a class="header-link" href="https://github.com/taekchef/agent-nocturne">GitHub</a>
+        <a class="header-chip" href="https://github.com/taekchef/agent-nocturne">GitHub</a>
       </nav>
     </div>
   </header>
@@ -34,13 +34,14 @@
   <main id="main-content">
     <section class="hero shell">
       <div class="hero-copy">
-        <p class="eyebrow" data-i18n="eyebrow">MacBook keyboard status</p>
-        <h1 data-i18n="headline">See what your agent is doing.</h1>
-        <p class="hero-lede" data-i18n="lede">Agent Nocturne turns one global keyboard brightness value into a quiet status language for Pi, Claude Code, and Codex.</p>
+        <p class="eyebrow" data-i18n="eyebrow">01 · MacBook keyboard status</p>
+        <h1 data-i18n="headline">Stop checking the terminal.</h1>
+        <p class="hero-lede" data-i18n="lede">Agent Nocturne turns the MacBook keyboard backlight into a quiet status language for Pi, Claude Code, and Codex. One brightness value, six rhythms. No banners, no sounds, nothing leaves the machine.</p>
         <div class="hero-links">
           <a class="button" href="#install" data-i18n="installCta">Install</a>
-          <a class="text-link" href="https://github.com/taekchef/agent-nocturne" data-i18n="sourceCta">View source</a>
+          <a class="button button-ghost" href="https://github.com/taekchef/agent-nocturne" data-i18n="sourceCta">View source</a>
         </div>
+        <p class="hero-meta" data-i18n="heroMeta">macOS · Node.js 20 or newer · Backlit MacBook keyboard</p>
       </div>
 
       <div class="demo" data-demo>
@@ -48,13 +49,13 @@
           <div class="stage-header">
             <div>
               <span class="stage-label" data-state-name>Thinking</span>
-              <span class="stage-cadence" data-state-cadence>4.8 second breath</span>
+              <span class="stage-cadence" data-state-cadence>4.8s breath</span>
             </div>
             <span class="global-light" data-i18n="globalLight">Global backlight</span>
           </div>
 
           <div class="keyboard" data-keyboard data-state="thinking" aria-label="MacBook keyboard backlight demonstration"></div>
-          <noscript><img class="keyboard-fallback" src="./keyboard.png" width="1224" height="580" alt="Black MacBook keyboard with white backlit legends"></noscript>
+          <noscript><img class="keyboard-fallback" src="./keyboard.png" width="1118" height="624" alt="Black MacBook keyboard with white backlit legends"></noscript>
 
           <div class="state-controls interactive-only" aria-label="Choose a lighting state">
             <button type="button" data-state-control="thinking" aria-pressed="true" data-i18n="stateThinking">Thinking</button>
@@ -64,7 +65,7 @@
             <button type="button" data-state-control="done" aria-pressed="false" data-i18n="stateDone">Done</button>
             <button type="button" data-state-control="error" aria-pressed="false" data-i18n="stateError">Error</button>
           </div>
-          <p class="state-description" data-state-description>The whole keyboard breathes together. Nothing moves or changes size.</p>
+          <p class="state-description" data-state-description>The whole keyboard breathes as one. Nothing moves, nothing changes size.</p>
         </div>
       </div>
     </section>
@@ -72,14 +73,14 @@
     <section class="install-section" id="install">
       <div class="shell install-inner">
         <div class="install-intro">
-          <p class="eyebrow" data-i18n="installEyebrow">Install</p>
-          <h2 data-i18n="installHeadline">Install once. Add your agents.</h2>
-          <p data-i18n="installLede">macOS, Node.js 20 or newer, and a MacBook with a backlit keyboard.</p>
+          <p class="eyebrow" data-i18n="installEyebrow">02 · Install</p>
+          <h2 data-i18n="installHeadline">Install once, cover three agents.</h2>
+          <p data-i18n="installLede">Requires macOS, Node.js 20 or newer, and a MacBook with a backlit keyboard. Everything runs locally.</p>
         </div>
 
         <div class="install-content">
           <div class="code-block">
-            <div class="code-label" data-i18n="coreLabel">Core</div>
+            <div class="code-label" data-i18n="coreLabel">Core · daemon and CLI</div>
             <pre><code>git clone https://github.com/taekchef/agent-nocturne.git
 cd agent-nocturne
 npm run build:native
@@ -121,7 +122,7 @@ claude plugin install agent-nocturne@agent-nocturne</code></pre>
               </section>
 
               <section id="panel-codex" role="tabpanel" aria-labelledby="tab-codex" data-install-panel="codex" hidden>
-                <p data-i18n="codexNote">Install the plugin, then review its hook definitions in /hooks.</p>
+                <p data-i18n="codexNote">Install the plugin, then review its hooks under /hooks.</p>
                 <div class="code-block code-block-small">
                   <pre><code>codex plugin marketplace add taekchef/agent-nocturne --ref main
 codex plugin add agent-nocturne@agent-nocturne</code></pre>
@@ -140,14 +141,14 @@ codex plugin add agent-nocturne@agent-nocturne</code></pre>
         <div><span data-i18n="runtimeLabel">Runtime</span><strong data-i18n="runtimeValue">Local only</strong></div>
         <div><span data-i18n="socketLabel">Socket</span><strong>0600</strong></div>
         <div><span data-i18n="adapterLabel">Adapters</span><strong data-i18n="adapterValue">Fail-open</strong></div>
-        <div><span data-i18n="hardwareLabel">Hardware</span><strong data-i18n="hardwareValue">Global white light</strong></div>
+        <div><span data-i18n="backlightLabel">Backlight</span><strong data-i18n="backlightValue">Global white</strong></div>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
     <div class="shell footer-inner">
-      <p data-i18n="footer">Open source under the MIT License. No account, cloud service, or analytics.</p>
+      <p data-i18n="footer">Open source under the MIT License. No account, no cloud, no analytics.</p>
       <nav aria-label="Footer navigation">
         <a href="https://github.com/taekchef/agent-nocturne/blob/main/docs/install.md" data-i18n="fullGuide">Full guide</a>
         <a href="https://github.com/taekchef/agent-nocturne/blob/main/LICENSE" data-i18n="license">License</a>

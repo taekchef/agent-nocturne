@@ -1,5 +1,6 @@
 const keyboardRows = [
-  [["esc", 1], ["1", 1], ["2", 1], ["3", 1], ["4", 1], ["5", 1], ["6", 1], ["7", 1], ["8", 1], ["9", 1], ["0", 1], ["-", 1], ["=", 1], ["delete", 1.6]],
+  [["esc", 1], ["F1", 1], ["F2", 1], ["F3", 1], ["F4", 1], ["F5", 1], ["F6", 1], ["F7", 1], ["F8", 1], ["F9", 1], ["F10", 1], ["F11", 1], ["F12", 1]],
+  [["`", 1], ["1", 1], ["2", 1], ["3", 1], ["4", 1], ["5", 1], ["6", 1], ["7", 1], ["8", 1], ["9", 1], ["0", 1], ["-", 1], ["=", 1], ["delete", 1.5]],
   [["tab", 1.45], ["Q", 1], ["W", 1], ["E", 1], ["R", 1], ["T", 1], ["Y", 1], ["U", 1], ["I", 1], ["O", 1], ["P", 1], ["[", 1], ["]", 1], ["\\", 1.2]],
   [["caps", 1.75], ["A", 1], ["S", 1], ["D", 1], ["F", 1], ["G", 1], ["H", 1], ["J", 1], ["K", 1], ["L", 1], [";", 1], ["'", 1], ["return", 1.75]],
   [["shift", 2.25], ["Z", 1], ["X", 1], ["C", 1], ["V", 1], ["B", 1], ["N", 1], ["M", 1], [",", 1], [".", 1], ["/", 1], ["shift", 2.25]],
@@ -10,11 +11,12 @@ const copy = {
   en: {
     skip: "Skip to main content",
     installNav: "Install",
-    eyebrow: "MacBook keyboard status",
-    headline: "See what your agent is doing.",
-    lede: "Agent Nocturne turns one global keyboard brightness value into a quiet status language for Pi, Claude Code, and Codex.",
+    eyebrow: "01 · MacBook keyboard status",
+    headline: "Stop checking the terminal.",
+    lede: "Agent Nocturne turns the MacBook keyboard backlight into a quiet status language for Pi, Claude Code, and Codex. One brightness value, six rhythms. No banners, no sounds, nothing leaves the machine.",
     installCta: "Install",
     sourceCta: "View source",
+    heroMeta: "macOS · Node.js 20 or newer · Backlit MacBook keyboard",
     globalLight: "Global backlight",
     stateThinking: "Thinking",
     stateTool: "Tool",
@@ -22,33 +24,34 @@ const copy = {
     stateWaiting: "Waiting",
     stateDone: "Done",
     stateError: "Error",
-    installEyebrow: "Install",
-    installHeadline: "Install once. Add your agents.",
-    installLede: "macOS, Node.js 20 or newer, and a MacBook with a backlit keyboard.",
-    coreLabel: "Core",
+    installEyebrow: "02 · Install",
+    installHeadline: "Install once, cover three agents.",
+    installLede: "Requires macOS, Node.js 20 or newer, and a MacBook with a backlit keyboard. Everything runs locally.",
+    coreLabel: "Core · daemon and CLI",
     copy: "Copy",
     piNote: "Link the extension, then run /reload inside Pi.",
     claudeNote: "Install the plugin from the repository marketplace.",
-    codexNote: "Install the plugin, then review its hook definitions in /hooks.",
+    codexNote: "Install the plugin, then review its hooks under /hooks.",
     runtimeLabel: "Runtime",
     runtimeValue: "Local only",
     socketLabel: "Socket",
     adapterLabel: "Adapters",
     adapterValue: "Fail-open",
-    hardwareLabel: "Hardware",
-    hardwareValue: "Global white light",
-    footer: "Open source under the MIT License. No account, cloud service, or analytics.",
+    backlightLabel: "Backlight",
+    backlightValue: "Global white",
+    footer: "Open source under the MIT License. No account, no cloud, no analytics.",
     fullGuide: "Full guide",
     license: "License",
   },
   zh: {
     skip: "跳到主要内容",
     installNav: "安装",
-    eyebrow: "MacBook 键盘状态灯",
-    headline: "看一眼键盘，就知道 Agent 在做什么。",
-    lede: "Agent Nocturne 把 MacBook 的全局键盘亮度变成 Pi、Claude Code 和 Codex 的安静状态语言。",
+    eyebrow: "01 · MacBook 键盘状态灯",
+    headline: "不用切回终端，看键盘就知道。",
+    lede: "Agent Nocturne 把 MacBook 的键盘背光变成一套安静的状态语言。Pi、Claude Code、Codex 在思考、调用工具、等你授权，还是已经出错，整块键盘的亮度节奏会直接告诉你。没有弹窗，没有提示音，数据不出本机。",
     installCta: "安装",
     sourceCta: "查看源码",
+    heroMeta: "macOS · Node.js 20 或更新 · 带背光键盘的 MacBook",
     globalLight: "全局背光",
     stateThinking: "思考",
     stateTool: "工具",
@@ -56,22 +59,22 @@ const copy = {
     stateWaiting: "等待",
     stateDone: "完成",
     stateError: "错误",
-    installEyebrow: "安装",
-    installHeadline: "安装一次，接入你的 Agent。",
-    installLede: "需要 macOS、Node.js 20 或更新版本，以及带背光键盘的 MacBook。",
-    coreLabel: "核心",
+    installEyebrow: "02 · 安装",
+    installHeadline: "安装一次，三个 Agent 都能用。",
+    installLede: "需要 macOS、Node.js 20 或更新版本，以及一台带背光键盘的 MacBook。全部在本机运行。",
+    coreLabel: "核心 · daemon 与 CLI",
     copy: "复制",
-    piNote: "链接扩展，然后在 Pi 内运行 /reload。",
+    piNote: "链接扩展，然后在 Pi 里运行 /reload。",
     claudeNote: "从仓库 marketplace 安装插件。",
-    codexNote: "安装插件，然后在 /hooks 中逐项检查 hook 定义。",
+    codexNote: "安装插件，然后在 /hooks 里逐项确认 hook 定义。",
     runtimeLabel: "运行方式",
     runtimeValue: "仅限本机",
     socketLabel: "Socket",
     adapterLabel: "适配器",
     adapterValue: "Fail-open",
-    hardwareLabel: "硬件",
-    hardwareValue: "全局白色背光",
-    footer: "MIT 开源。无需账户、云服务或 analytics。",
+    backlightLabel: "背光",
+    backlightValue: "全局白光",
+    footer: "MIT 开源。无账户、无云服务、无分析。",
     fullGuide: "完整指南",
     license: "许可证",
   },
@@ -79,20 +82,20 @@ const copy = {
 
 const states = {
   en: {
-    thinking: { name: "Thinking", cadence: "4.8 second breath", description: "The whole keyboard breathes together. Nothing moves or changes size." },
-    tool: { name: "Tool activity", cadence: "1.8 second pulse", description: "A low global pulse stays visible while a tool batch is active." },
-    permission: { name: "Permission", cadence: "540 ms attention blink", description: "The full backlight blinks because the agent cannot continue without you." },
-    waiting: { name: "Waiting for input", cadence: "two taps every 2.5 seconds", description: "Two brief full-keyboard taps ask for a reply, then the light rests." },
-    done: { name: "Done", cadence: "one 1.2 second exhale", description: "One soft global rise and fall closes the turn." },
-    error: { name: "Terminal error", cadence: "four short flashes", description: "Four finite global flashes are reserved for terminal failure." },
+    thinking: { name: "Thinking", cadence: "4.8s breath", description: "The whole keyboard breathes as one. Nothing moves, nothing changes size." },
+    tool: { name: "Tool activity", cadence: "1.8s pulse", description: "A low, even pulse while a tool batch runs. Present, but easy to ignore." },
+    permission: { name: "Permission", cadence: "540ms blink", description: "The agent cannot continue without you, so the full backlight blinks. After ten seconds it slows down instead of nagging." },
+    waiting: { name: "Waiting for input", cadence: "two taps / 2.5s", description: "Two brief taps every 2.5 seconds ask for a reply, then the light rests." },
+    done: { name: "Done", cadence: "1.2s exhale", description: "One soft rise and fall closes the turn, then the keyboard settles." },
+    error: { name: "Terminal error", cadence: "four short flashes", description: "Four finite flashes, reserved for failures the agent cannot recover from." },
   },
   zh: {
-    thinking: { name: "思考中", cadence: "4.8 秒呼吸", description: "整块键盘同步呼吸。键帽和字符不会移动，也不会改变尺寸。" },
-    tool: { name: "工具执行", cadence: "1.8 秒脉冲", description: "工具批次运行时，整块键盘保持低幅度全局脉冲。" },
-    permission: { name: "权限请求", cadence: "540 毫秒注意闪烁", description: "Agent 需要你的决定，因此整块背光会明显闪烁。" },
-    waiting: { name: "等待输入", cadence: "每 2.5 秒两次轻触", description: "整块键盘短促亮起两次，请求回复，然后回到安静亮度。" },
-    done: { name: "完成", cadence: "一次 1.2 秒呼气", description: "一次柔和的全局起落结束当前 turn。" },
-    error: { name: "终局错误", cadence: "四次短闪", description: "四次有限的全局闪烁只用于终局失败。" },
+    thinking: { name: "思考中", cadence: "4.8 秒呼吸", description: "整块键盘一起缓慢呼吸。键帽不动，字符不变形，只有亮度在起伏。" },
+    tool: { name: "工具执行", cadence: "1.8 秒脉冲", description: "工具批次运行期间保持低幅脉冲。看得见，但不会打扰你。" },
+    permission: { name: "权限请求", cadence: "540 毫秒闪烁", description: "Agent 无法独自继续，整块背光明确闪烁。十秒后自动放慢，不催你。" },
+    waiting: { name: "等待输入", cadence: "每 2.5 秒两次轻触", description: "每 2.5 秒轻触两次，提醒你该回复了，然后恢复安静。" },
+    done: { name: "完成", cadence: "1.2 秒呼气", description: "一次柔和的起落，这一轮就此结束。" },
+    error: { name: "终局错误", cadence: "四次短闪", description: "四次短促闪烁，只留给无法自行恢复的失败。" },
   },
 };
 
@@ -214,7 +217,7 @@ function applyLanguage(nextLanguage, updateUrl) {
 
 function applyRoom(room, persist) {
   root.dataset.room = room;
-  document.querySelector('meta[name="theme-color"]').content = room === "dark" ? "#080909" : "#f3f1ec";
+  document.querySelector('meta[name="theme-color"]').content = room === "dark" ? "#080909" : "#f2f0ea";
   updateRoomButton();
   if (persist) writeStorage("agent-nocturne-room", room);
 }
@@ -224,7 +227,7 @@ function updateRoomButton() {
   if (!button) return;
   const dark = root.dataset.room === "dark";
   button.setAttribute("aria-pressed", String(dark));
-  button.textContent = language === "zh" ? (dark ? "开灯" : "暗室") : (dark ? "Daylight" : "Dark room");
+  button.textContent = language === "zh" ? (dark ? "开灯" : "暗室") : (dark ? "Lights on" : "Dark room");
 }
 
 function selectInstallTab(name) {
