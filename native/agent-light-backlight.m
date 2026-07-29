@@ -3,12 +3,14 @@
 @interface KeyboardBrightnessClient : NSObject
 - (id)copyKeyboardBacklightIDs;
 - (float)brightnessForKeyboard:(unsigned long long)keyboard;
+- (BOOL)isBacklightDimmedOnKeyboard:(unsigned long long)keyboard;
+- (BOOL)isBacklightSuppressedOnKeyboard:(unsigned long long)keyboard;
 - (BOOL)setBrightness:(float)brightness forKeyboard:(unsigned long long)keyboard;
 - (BOOL)setBrightness:(float)brightness fadeSpeed:(int)fadeSpeed commit:(BOOL)commit forKeyboard:(unsigned long long)keyboard;
 @end
 
 static void print_usage(void) {
-    fprintf(stderr, "Usage: agent-light-backlight <probe|get|set <0..1>>\n");
+    fprintf(stderr, "Usage: agent-light-backlight <probe|get|get-state|set <0..1>>\n");
 }
 
 static KeyboardBrightnessClient *make_client(void) {
@@ -77,6 +79,25 @@ int main(int argc, const char *argv[]) {
                 return 1;
             }
             printf("%.4f\n", [client brightnessForKeyboard:kid]);
+            return 0;
+        }
+
+        if ([command isEqualToString:@"get-state"]) {
+            if (![client respondsToSelector:@selector(brightnessForKeyboard:)]) {
+                fprintf(stderr, "brightnessForKeyboard selector is unavailable\n");
+                return 1;
+            }
+            float brightness = [client brightnessForKeyboard:kid];
+            BOOL dimmed = [client respondsToSelector:@selector(isBacklightDimmedOnKeyboard:)]
+                ? [client isBacklightDimmedOnKeyboard:kid]
+                : NO;
+            BOOL suppressed = [client respondsToSelector:@selector(isBacklightSuppressedOnKeyboard:)]
+                ? [client isBacklightSuppressedOnKeyboard:kid]
+                : NO;
+            printf("{\"brightness\":%.4f,\"dimmed\":%s,\"suppressed\":%s}\n",
+                   brightness,
+                   dimmed ? "true" : "false",
+                   suppressed ? "true" : "false");
             return 0;
         }
 

@@ -5,7 +5,7 @@ import { createBackend } from "./backends/index.mjs";
 import { loadConfig } from "./config.mjs";
 import { appendLog } from "./logger.mjs";
 import { brightnessForVisual } from "./effects.mjs";
-import { createEvent, normalizeBrightness, socketPath } from "./protocol.mjs";
+import { baselinePath, createEvent, normalizeBrightness, socketPath } from "./protocol.mjs";
 import { AgentLightStateMachine } from "./state-machine.mjs";
 
 const ACTIVE_TICK_MS = 80;
@@ -26,16 +26,21 @@ export class AgentLightDaemon {
     this.renderPending = false;
     this.previousVisualState = "idle";
     this.lastBaselineCheckAt = 0;
+    this.baselineStore = options.baselineStore ?? createFileBaselineStore();
+    this.baselineSource = "hardware";
+    this.baselineSampleIgnored = false;
     this.startedAt = Date.now();
   }
 
   async start() {
     this.config ??= await loadConfig();
     this.backend ??= await createBackend(this.config);
-    this.baseline = await this.safeGetBrightness();
-    this.lastBrightness = this.baseline;
-    this.lastBaselineCheckAt = Date.now();
-    await appendLog("daemon.start", { backend: this.backend.name, baseline: this.baseline });
+    await this.initializeBaseline();
+    await appendLog("daemon.start", {
+      backend: this.backend.name,
+      baseline: this.baseline,
+      baselineSource: this.baselineSource,
+    });
 
     await this.removeStaleSocket();
     this.server = net.createServer((socket) => this.handleSocket(socket));
@@ -209,13 +214,49 @@ export class AgentLightDaemon {
     await this.setIfChanged(brightnessForVisual(visual, now, context));
   }
 
+  async initializeBaseline() {
+    const sample = await this.safeGetBrightnessState();
+    const persisted = await this.safeLoadPersistedBaseline();
+    const systemOverride = sample.dimmed || sample.suppressed;
+
+    if (systemOverride && persisted !== undefined) {
+      this.baseline = persisted;
+      this.baselineSource = "persisted";
+    } else {
+      this.baseline = sample.brightness;
+      this.baselineSource = "hardware";
+      if (!systemOverride) await this.safePersistBaseline(this.baseline);
+    }
+
+    this.baselineSampleIgnored = systemOverride;
+    this.lastBrightness = sample.brightness;
+    this.lastBaselineCheckAt = Date.now();
+  }
+
   async refreshBaseline(now = Date.now()) {
     this.lastBaselineCheckAt = now;
     try {
-      const current = normalizeBrightness(await this.backend.getBrightness());
+      const sample = await this.getBrightnessState();
+      if (sample.dimmed || sample.suppressed) {
+        if (!this.baselineSampleIgnored) {
+          await appendLog("baseline.ignored", {
+            brightness: sample.brightness,
+            dimmed: sample.dimmed,
+            suppressed: sample.suppressed,
+          });
+        }
+        this.baselineSampleIgnored = true;
+        this.lastBrightness = sample.brightness;
+        return;
+      }
+
+      this.baselineSampleIgnored = false;
+      const current = sample.brightness;
       if (Math.abs(current - this.baseline) < EPSILON) return;
       this.baseline = current;
+      this.baselineSource = "hardware";
       this.lastBrightness = current;
+      await this.safePersistBaseline(current);
       await appendLog("baseline.updated", { baseline: current });
     } catch (error) {
       await appendLog("baseline.refresh.failed", { error: error instanceof Error ? error.message : String(error) });
@@ -239,12 +280,46 @@ export class AgentLightDaemon {
     this.lastBrightness = this.baseline;
   }
 
-  async safeGetBrightness() {
+  async getBrightnessState() {
+    if (typeof this.backend.getBrightnessState === "function") {
+      const state = await this.backend.getBrightnessState();
+      return {
+        brightness: normalizeBrightness(state.brightness),
+        dimmed: state.dimmed === true,
+        suppressed: state.suppressed === true,
+      };
+    }
+    return {
+      brightness: normalizeBrightness(await this.backend.getBrightness()),
+      dimmed: false,
+      suppressed: false,
+    };
+  }
+
+  async safeGetBrightnessState() {
     try {
-      return normalizeBrightness(await this.backend.getBrightness());
+      return await this.getBrightnessState();
     } catch (error) {
       await appendLog("backend.getBrightness.failed", { error: error instanceof Error ? error.message : String(error) });
-      return 0.5;
+      return { brightness: 0.5, dimmed: false, suppressed: false };
+    }
+  }
+
+  async safeLoadPersistedBaseline() {
+    try {
+      const value = await this.baselineStore.load();
+      return Number.isFinite(value) ? normalizeBrightness(value) : undefined;
+    } catch (error) {
+      await appendLog("baseline.load.failed", { error: error instanceof Error ? error.message : String(error) });
+      return undefined;
+    }
+  }
+
+  async safePersistBaseline(value) {
+    try {
+      await this.baselineStore.save(normalizeBrightness(value));
+    } catch (error) {
+      await appendLog("baseline.persist.failed", { error: error instanceof Error ? error.message : String(error) });
     }
   }
 
@@ -254,6 +329,7 @@ export class AgentLightDaemon {
       socketPath: socketPath(),
       backend: this.backend.name,
       baseline: this.baseline,
+      baselineSource: this.baselineSource,
       lastBrightness: this.lastBrightness,
       uptimeMs: Date.now() - this.startedAt,
       machine: this.machine.snapshot(),
@@ -267,6 +343,22 @@ export class AgentLightDaemon {
       },
     };
   }
+}
+
+function createFileBaselineStore() {
+  return {
+    async load() {
+      if (!existsSync(baselinePath())) return undefined;
+      const parsed = JSON.parse(await fs.readFile(baselinePath(), "utf8"));
+      return parsed.brightness;
+    },
+    async save(brightness) {
+      const target = baselinePath();
+      const temporary = `${target}.${process.pid}.tmp`;
+      await fs.writeFile(temporary, `${JSON.stringify({ version: 1, brightness }, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+      await fs.rename(temporary, target);
+    },
+  };
 }
 
 export async function runDaemon() {

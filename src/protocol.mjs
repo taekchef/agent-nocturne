@@ -67,6 +67,10 @@ export function statePath() {
   return path.join(appSupportDir(), "state.json");
 }
 
+export function baselinePath() {
+  return path.join(appSupportDir(), "baseline.json");
+}
+
 export function logPath() {
   return path.join(logDir(), "agent-light.log");
 }

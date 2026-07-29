@@ -39,6 +39,24 @@ export class NativeBacklightBackend {
     return normalizeBrightness(brightness);
   }
 
+  async getBrightnessState() {
+    let stdout;
+    try {
+      ({ stdout } = await execFileAsync(this.helperPath, ["get-state"], { timeout: this.timeoutMs }));
+    } catch {
+      return { brightness: await this.getBrightness(), dimmed: false, suppressed: false };
+    }
+    const state = JSON.parse(stdout.trim());
+    if (!Number.isFinite(state?.brightness)) {
+      throw new Error(`native helper returned invalid brightness state: ${stdout.trim()}`);
+    }
+    return {
+      brightness: normalizeBrightness(state.brightness),
+      dimmed: state.dimmed === true,
+      suppressed: state.suppressed === true,
+    };
+  }
+
   async setBrightness(value) {
     const brightness = normalizeBrightness(value).toFixed(4);
     await execFileAsync(this.helperPath, ["set", brightness], { timeout: this.timeoutMs });
