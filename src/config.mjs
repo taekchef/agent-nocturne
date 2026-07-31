@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { dirname } from "node:path";
-import { configPath, logDir, appSupportDir } from "./protocol.mjs";
+import { configPath, logDir, appSupportDir, statePath } from "./protocol.mjs";
 
 export const DEFAULT_CONFIG = Object.freeze({
   enabled: true,
@@ -86,4 +86,27 @@ export async function writeDefaultConfigIfMissing() {
   if (existsSync(configPath())) return false;
   await fs.writeFile(configPath(), `${JSON.stringify(DEFAULT_CONFIG, null, 2)}\n`, "utf8");
   return true;
+}
+
+// Persistent paused flag, stored in state.json so it survives daemon restarts
+// (including the auto-start triggered by agent hooks). This is the backbone of
+// `nocturne pause` / `nocturne resume`: once paused, the light stays off even
+// when an agent fires a lifecycle hook that would otherwise spin the daemon up.
+export async function isPaused() {
+  if (!existsSync(statePath())) return false;
+  try {
+    const parsed = JSON.parse(await fs.readFile(statePath(), "utf8"));
+    return parsed.paused === true;
+  } catch {
+    return false;
+  }
+}
+
+export async function setPaused(paused) {
+  await ensureDirs();
+  if (paused) {
+    await fs.writeFile(statePath(), `${JSON.stringify({ paused: true }, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
+  } else if (existsSync(statePath())) {
+    await fs.unlink(statePath()).catch(() => {});
+  }
 }

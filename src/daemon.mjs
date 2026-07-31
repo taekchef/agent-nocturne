@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import { existsSync } from "node:fs";
 import net from "node:net";
 import { createBackend } from "./backends/index.mjs";
-import { loadConfig } from "./config.mjs";
+import { isPaused, loadConfig, setPaused } from "./config.mjs";
 import { appendLog } from "./logger.mjs";
 import { brightnessForVisual } from "./effects.mjs";
 import { baselinePath, createEvent, normalizeBrightness, socketPath } from "./protocol.mjs";
@@ -27,19 +27,23 @@ export class AgentLightDaemon {
     this.previousVisualState = "idle";
     this.lastBaselineCheckAt = 0;
     this.baselineStore = options.baselineStore ?? createFileBaselineStore();
+    this.pausedStore = options.pausedStore ?? createFilePausedStore();
     this.baselineSource = "hardware";
     this.baselineSampleIgnored = false;
     this.startedAt = Date.now();
+    this.paused = false;
   }
 
   async start() {
     this.config ??= await loadConfig();
     this.backend ??= await createBackend(this.config);
+    this.paused = await this.pausedStore.isPaused();
     await this.initializeBaseline();
     await appendLog("daemon.start", {
       backend: this.backend.name,
       baseline: this.baseline,
       baselineSource: this.baselineSource,
+      paused: this.paused,
     });
 
     await this.removeStaleSocket();
@@ -117,6 +121,30 @@ export class AgentLightDaemon {
       return;
     }
 
+    if (event.event === "pause") {
+      this.paused = true;
+      await this.pausedStore.setPaused(true);
+      await this.restore();
+      await appendLog("nocturne.paused");
+      socket.write(`${JSON.stringify({ ok: true, paused: true })}\n`);
+      return;
+    }
+
+    if (event.event === "resume") {
+      this.paused = false;
+      await this.pausedStore.setPaused(false);
+      await appendLog("nocturne.resumed");
+      socket.write(`${JSON.stringify({ ok: true, paused: false })}\n`);
+      return;
+    }
+
+    // When paused, drop all agent events so agent hooks cannot revive the light.
+    // restore/idle/status/shutdown/pause/resume are still honoured above.
+    if (this.paused) {
+      socket.write(`${JSON.stringify({ ok: true, ignored: "paused" })}\n`);
+      return;
+    }
+
     if (!this.config.enabled && event.event !== "restore" && event.event !== "idle") {
       socket.write(`${JSON.stringify({ ok: true, ignored: "disabled" })}\n`);
       return;
@@ -191,6 +219,15 @@ export class AgentLightDaemon {
 
   async renderTick(now = Date.now()) {
     const visual = this.machine.visible(now);
+
+    // Paused: keep the keyboard at the user's baseline and do not animate.
+    if (this.paused) {
+      if (this.lastBrightness !== this.baseline) {
+        await this.restore();
+      }
+      this.previousVisualState = "idle";
+      return;
+    }
 
     if (visual.state === "idle") {
       if (this.previousVisualState !== "idle") {
@@ -332,6 +369,7 @@ export class AgentLightDaemon {
       baselineSource: this.baselineSource,
       lastBrightness: this.lastBrightness,
       uptimeMs: Date.now() - this.startedAt,
+      paused: this.paused,
       machine: this.machine.snapshot(),
       config: {
         enabled: this.config.enabled,
@@ -358,6 +396,13 @@ function createFileBaselineStore() {
       await fs.writeFile(temporary, `${JSON.stringify({ version: 1, brightness }, null, 2)}\n`, { encoding: "utf8", mode: 0o600 });
       await fs.rename(temporary, target);
     },
+  };
+}
+
+function createFilePausedStore() {
+  return {
+    isPaused,
+    setPaused,
   };
 }
 

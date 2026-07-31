@@ -27,6 +27,10 @@ export async function main(args) {
       return testEffect(rest);
     case "restore":
       return restore(rest);
+    case "pause":
+      return pause();
+    case "resume":
+      return resume();
     case "config":
       return configCommand(rest);
     case "daemon":
@@ -112,6 +116,16 @@ async function testEffect(args) {
 
 async function restore() {
   await sendEvent(createEvent({ event: "restore", agent: "cli" }), { autoStart: true });
+}
+
+async function pause() {
+  await sendEvent(createEvent({ event: "pause", agent: "cli" }), { autoStart: true });
+  console.log("Agent Nocturne paused. The keyboard will stay at your brightness until you run `nocturne resume`.");
+}
+
+async function resume() {
+  await sendEvent(createEvent({ event: "resume", agent: "cli" }), { autoStart: true });
+  console.log("Agent Nocturne resumed.");
 }
 
 async function configCommand(args) {
@@ -303,5 +317,5 @@ function sleep(ms) {
 
 function printHelp() {
   const events = [...KNOWN_EVENTS].filter((event) => !["status", "shutdown", "restore"].includes(event)).join("|");
-  console.log(`Agent Nocturne ${PACKAGE_VERSION}\n\nUsage:\n  nocturne notify <${events}> [<event> ...] [--agent pi] [--session id] [--tool bash]\n  nocturne test <event> [--duration seconds]\n  nocturne status [--json]\n  nocturne restore\n  nocturne daemon <start|stop|run|probe>\n  nocturne config <init|show|path>\n\nCompatibility alias: agent-light\nConfig: ${configPath()}\nLog:    ${logPath()}\nSocket: ${socketPath()}\n`);
+  console.log(`Agent Nocturne ${PACKAGE_VERSION}\n\nUsage:\n  nocturne notify <${events}> [<event> ...] [--agent pi] [--session id] [--tool bash]\n  nocturne test <event> [--duration seconds]\n  nocturne status [--json]\n  nocturne restore\n  nocturne pause\n  nocturne resume\n  nocturne daemon <start|stop|run|probe>\n  nocturne config <init|show|path>\n\npause   silence the keyboard until 'resume' (survives daemon restarts)\nresume  turn the keyboard signal back on\n\nCompatibility alias: agent-light\nConfig: ${configPath()}\nLog:    ${logPath()}\nSocket: ${socketPath()}\n`);
 }
