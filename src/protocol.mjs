@@ -23,6 +23,8 @@ export const KNOWN_EVENTS = new Set([
   "restore",
   "status",
   "shutdown",
+  "pause",
+  "resume",
 ]);
 
 export const DEFAULT_TTL_MS = {
