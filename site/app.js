@@ -1,4 +1,4 @@
-/* Agent Nocturne — nocturne stage interactions.
+/* Agent Nocturne - nocturne stage interactions.
  * Keyboard render + cadence demo + waveform sparklines + in-place i18n + copy + tabs.
  * Waveform samplers mirror src/effects.mjs so the on-page demo matches the real hardware.
  */
@@ -85,7 +85,7 @@
   function applyLang(lang) {
     currentLang = lang;
     document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
-    document.documentElement.dataset.lang = lang;
+    document.documentElement.dataset.language = lang;
     for (const el of document.querySelectorAll("[data-en]")) {
       const v = lang === "zh" ? el.dataset.zh : el.dataset.en;
       if (v != null) el.textContent = v;
@@ -94,17 +94,20 @@
     const active = document.querySelector('.demo-toggles [aria-pressed="true"]');
     if (active) setDemoState(active.dataset.stateControl);
     // lang button label toggles
-    const lt = document.querySelector("[data-lang-toggle]");
+    const lt = document.querySelector("[data-language-toggle]");
     if (lt) { lt.textContent = l10n[lang].langBtn; lt.setAttribute("aria-pressed", String(lang === "zh")); }
     try { localStorage.setItem("nocturne-lang", lang); } catch {}
   }
 
-  /* ---------- Theme ---------- */
+  /* ---------- Theme (room mode) ---------- */
   function applyTheme(theme) {
-    document.documentElement.dataset.theme = theme;
+    const root = document.documentElement;
+    root.dataset.room = theme;
     const rt = document.querySelector("[data-room-toggle]");
     if (rt) rt.setAttribute("aria-pressed", String(theme === "light"));
-    try { localStorage.setItem("nocturne-theme", theme); } catch {}
+    try { localStorage.setItem("nocturne-room", theme); } catch {}
+    // reflect room mode in the URL without a navigation, so it survives reload
+    history.replaceState(null, "", `#${root.dataset.room === "light" ? "lights" : ""}`);
   }
 
   /* ---------- Copy ---------- */
@@ -198,13 +201,13 @@
     let lang = "en";
     try { lang = localStorage.getItem("nocturne-lang") === "zh" ? "zh" : "en"; } catch {}
     applyLang(lang);
-    document.querySelector("[data-lang-toggle]")?.addEventListener("click", () => applyLang(currentLang === "zh" ? "en" : "zh"));
+    document.querySelector("[data-language-toggle]")?.addEventListener("click", () => applyLang(currentLang === "zh" ? "en" : "zh"));
 
-    // theme (default dark / nocturne)
+    // room mode (default dark / nocturne)
     let theme = "dark";
-    try { theme = localStorage.getItem("nocturne-theme") === "light" ? "light" : "dark"; } catch {}
+    try { theme = localStorage.getItem("nocturne-room") === "light" ? "light" : "dark"; } catch {}
     applyTheme(theme);
-    document.querySelector("[data-room-toggle]")?.addEventListener("click", () => applyTheme(document.documentElement.dataset.theme === "light" ? "dark" : "light"));
+    document.querySelector("[data-room-toggle]")?.addEventListener("click", () => applyTheme(document.documentElement.dataset.room === "light" ? "dark" : "light"));
 
     // initial active state label
     setDemoState("thinking");
