@@ -1,12 +1,71 @@
+<div align="center">
+
+<img src="site/og.png" alt="Agent Nocturne" width="640" />
+
 # Agent Nocturne
 
-> A nocturne for your coding agent.
+**A nocturne for your coding agent — played on the MacBook keyboard backlight.**
 
-[Website](https://taekchef.github.io/agent-nocturne/) · [中文](https://taekchef.github.io/agent-nocturne/?lang=zh) · [Install](https://taekchef.github.io/agent-nocturne/#install)
+[Website](https://taekchef.github.io/agent-nocturne/) · [中文说明](README.zh-CN.md) · [Install](https://taekchef.github.io/agent-nocturne/#install)
 
-Agent Nocturne turns the built-in MacBook keyboard backlight into a calm, local status language for Pi, Claude Code, and Codex.
+[![License: MIT](https://img.shields.io/badge/License-MIT-3d5a48.svg)](LICENSE)
+[![Node](https://img.shields.io/badge/Node.js-%E2%89%A520-3d5a48.svg)](https://nodejs.org)
+[![Platform](https://img.shields.io/badge/Platform-macOS-3d5a48.svg)](https://www.apple.com/macos)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-3d5a48.svg)](CONTRIBUTING.md)
 
-It uses cadence, not color, to distinguish thought, tool activity, requests for attention, completion, and failure. A MacBook keyboard exposes one global brightness value, so Agent Nocturne does not claim RGB or per-key effects.
+</div>
+
+---
+
+> A nocturne is a quiet composition for the night. Agent Nocturne turns your MacBook keyboard backlight into the same kind of calm signal — so a coding agent can tell you where it is without pulling your eyes off the work.
+
+Agent Nocturne turns the built-in MacBook keyboard backlight into a **local status language** for [Pi](https://github.com/earendil-works/pi-coding-agent), Claude Code, and Codex.
+
+It uses **cadence, not color**, to distinguish thought, tool activity, requests for attention, completion, and failure. A MacBook keyboard exposes one global brightness value, so Agent Nocturne does not claim RGB or per-key effects — it turns *timing* into meaning.
+
+## TL;DR
+
+- 🎵 **Cadence over color** — six rhythms (breath, pulse, blink, taps, exhale, stutter) carry the state, not hue.
+- 🔒 **Fully local** — events travel a user-only Unix socket (`0600`). No account, no cloud, no analytics, nothing leaves the machine.
+- 🛟 **Fail-open** — if the daemon or an adapter is unavailable, the coding agent runs normally.
+- 🔌 **Three adapters** — Pi, Claude Code, and Codex, observed through their lifecycle hooks.
+
+## Quick start
+
+Install the core (macOS, Node.js ≥ 20, Xcode Command Line Tools):
+
+```bash
+git clone https://github.com/taekchef/agent-nocturne.git
+cd agent-nocturne
+npm run build:native
+npm link
+nocturne config init
+nocturne daemon start
+nocturne status
+```
+
+Then add one adapter (e.g. Claude Code):
+
+```bash
+claude plugin marketplace add taekchef/agent-nocturne
+claude plugin install agent-nocturne@agent-nocturne
+```
+
+Test the hardware, then restore the captured brightness:
+
+```bash
+nocturne test thinking --duration 3
+nocturne test done --duration 1
+nocturne restore
+```
+
+Full adapter instructions are in [Install](https://taekchef.github.io/agent-nocturne/#install) and [docs/install.md](docs/install.md).
+
+## Why "Nocturne"?
+
+A *nocturne* is a night piece — quiet, restrained, made for the dark hours. When you code at night with an agent running, you don't want banners, sounds, or a terminal you have to keep checking. You want a signal that sits at the edge of your attention.
+
+So the keyboard plays a small nocturne: a slow breath while the agent thinks, a soft exhale when it's done, a sharp stutter only when something truly fails. The room stays quiet. You keep working.
 
 ## Support status
 
@@ -21,9 +80,9 @@ Adapters are fail-open. If Agent Nocturne or its daemon is unavailable, the codi
 
 ## Nocturne lighting language
 
-| State/event | Default effect |
+| State / event | Default effect |
 |---|---|
-| `thinking` | slow asymmetric 4.8s breath |
+| `thinking` | slow asymmetric 4.8 s breath |
 | `tool-start` / `tool` | one batch acknowledgement, then a dim active pulse |
 | `tool-error` | one muted dip for a recoverable tool failure |
 | `permission` | urgent high-contrast blink |
@@ -125,10 +184,16 @@ nocturne notify idle --agent pi
 nocturne status
 nocturne test thinking --duration 5
 nocturne restore
+nocturne pause
+nocturne resume
 nocturne daemon start
 nocturne daemon stop
 nocturne config show
 ```
+
+### Pause and resume
+
+Run `nocturne pause` to silence the keyboard at once — the backlight returns to your brightness and stays there. The paused state is persisted, so it survives a daemon restart (including the auto-start triggered by agent hooks). Run `nocturne resume` to turn the signal back on.
 
 ## Configuration
 
@@ -173,7 +238,7 @@ Pi / Claude Code / Codex adapter
   CoreBrightness helper or mock backend
 ```
 
-The daemon tracks state per agent session, prioritizes concurrent agents, expires stale states, and refreshes the user's brightness baseline while idle. Active animation ticks run at 80ms; idle polling drops to 1.5s.
+The daemon tracks state per agent session, prioritizes concurrent agents, expires stale states, and refreshes the user's brightness baseline while idle. Active animation ticks run at 80 ms; idle polling drops to 1.5 s.
 
 ## Privacy and safety
 
@@ -184,6 +249,23 @@ The daemon tracks state per agent session, prioritizes concurrent agents, expire
 - The Unix socket is user-only (`0600`).
 - Hooks emit no model-visible stdout and never approve or deny tools.
 - `nocturne restore` restores the captured baseline brightness.
+
+## FAQ
+
+**Does it keep the backlight on all the time?**
+No. On `idle`, the daemon restores your latest manual brightness baseline — including `0` (off). Set `respectKeyboardOff: true` to keep it dark even during animation.
+
+**How do I turn it off when it gets distracting?**
+`nocturne pause`. The keyboard goes quiet immediately and stays quiet — even when an agent fires a hook that would normally spin the daemon back up. `nocturne resume` turns it back on.
+
+**Will it fight me when I change brightness manually?**
+No. While idle, the daemon refreshes the baseline every 1.5 s, so your manual adjustment becomes the new resting level. `nocturne restore` always returns to it.
+
+**Does it work with an external keyboard?**
+No. It drives the built-in MacBook keyboard backlight via the private `CoreBrightness` API, which has no concept of external devices.
+
+**Is there a Windows / Linux version?**
+No. The hardware control path is macOS-specific. The mock backend exists for development and CI on any OS.
 
 ## Development
 
@@ -199,4 +281,6 @@ See [installation notes](docs/install.md) and [troubleshooting](docs/troubleshoo
 
 ## License
 
-[MIT](LICENSE)
+[MIT](LICENSE) · Built by [@taekchef](https://github.com/taekchef)
+
+中文说明见 [README.zh-CN.md](README.zh-CN.md).
